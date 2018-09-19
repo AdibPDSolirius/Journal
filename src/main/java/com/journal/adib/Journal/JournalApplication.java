@@ -2,10 +2,10 @@ package com.journal.adib.Journal;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@EnableScheduling
+@ComponentScan("com.journal.adib.Journal")
 public class JournalApplication {
 
 

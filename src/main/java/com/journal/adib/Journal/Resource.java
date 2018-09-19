@@ -1,11 +1,27 @@
 package com.journal.adib.Journal;
 
-import javax.persistence.Column;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
+@Entity
 @Table(name="resources")
 public class Resource {
 
+    @Id
+    @NotNull
+    @GeneratedValue(generator = "question_generator")
+    @SequenceGenerator(
+            name = "question_generator",
+            sequenceName = "question_sequence",
+            initialValue = 1000
+    )
+    @Column(name = "resource_id")
+    private Long id;
+
+    @NotBlank
+    @Size(max = 30)
     @Column(name="resource_name")
     private String resourceName;
 
