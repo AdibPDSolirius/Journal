@@ -1,9 +1,9 @@
 package com.journal.adib.Journal;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,24 +12,23 @@ import java.util.List;
 @Controller
 public class ResourceController {
 
+    @Autowired
+    ResourceService resourceService;
 
-        @GetMapping("/resources")
-        public String greeting(Model model) {
-//            List<Resource> resources = new ArrayList();
-//            Resource r = new Resource();
-//            r.setResourceName("Spring tutorial");
-//            r.setResourceURL("https://www.tutorialspoint.com/spring/");
-//            resources.add(r);
-//            ResourceService rs = new ResourceService();
-            model.addAttribute("resources", "hello");
-            return "resource-list";
 
-        }
+    @GetMapping("/resources")
+    public String findResources(Model model) {
+        List<Resource> resources = resourceService.findAll();
+        model.addAttribute("resources",resources);
+        return "resource-list";
 
-//        @PutMapping("/resource/{resourceId}")
-//        public Resource updateResource(){
-//
-//        }
+    }
+
+    @PostMapping("/resources")
+    @ResponseBody
+    public Resource createResource(@RequestBody Resource resource){
+        return resourceService.saveResource(resource);
+    }
 
 
 }

@@ -10,13 +10,7 @@ import javax.validation.constraints.Size;
 public class Resource {
 
     @Id
-    @NotNull
-    @GeneratedValue(generator = "question_generator")
-    @SequenceGenerator(
-            name = "question_generator",
-            sequenceName = "question_sequence",
-            initialValue = 1000
-    )
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "resource_id")
     private Long id;
 
