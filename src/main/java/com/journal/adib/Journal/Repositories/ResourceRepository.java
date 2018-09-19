@@ -1,9 +1,10 @@
-package com.journal.adib.Journal;
+package com.journal.adib.Journal.Repositories;
 
+import com.journal.adib.Journal.Models.Resource;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
 public interface ResourceRepository extends CrudRepository<Resource, Long> {
-    public List<Resource> findAll();
+    List<Resource> findAll();
 }

@@ -1,10 +1,10 @@
-package com.journal.adib.Journal;
+package com.journal.adib.Journal.Services;
 
+import com.journal.adib.Journal.Models.Resource;
+import com.journal.adib.Journal.Repositories.ResourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -23,5 +23,7 @@ public class ResourceService {
     public Resource saveResource(Resource resource){
         return resourceRepository.save(resource);
     }
+
+    public void deleteResource(Long resourceId){ resourceRepository.deleteById(resourceId); };
 
 }

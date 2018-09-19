@@ -10,10 +10,12 @@
         <tr>
             <th>Name</th>
             <th>URL</th>
+            <th>Language</th>
         </tr>
         <tr th:each="resource : ${resources}">
             <td th:text="${resource.getResourceName()}"></td>
             <td th:text="${resource.getResourceURL()}"></td>
+            <td th:text="${resource.getLanguages()}"></td>
         </tr>
     </table>
 </body>

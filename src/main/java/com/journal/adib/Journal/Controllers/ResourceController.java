@@ -1,11 +1,13 @@
-package com.journal.adib.Journal;
+package com.journal.adib.Journal.Controllers;
 
+import com.journal.adib.Journal.Models.Resource;
+import com.journal.adib.Journal.Services.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 

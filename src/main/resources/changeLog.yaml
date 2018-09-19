@@ -1,4 +1,93 @@
-databaseChangeLog: []
+databaseChangeLog:
+- changeSet:
+    id: 1537364992891-1
+    author: adib (generated)
+    changes:
+    - createSequence:
+        sequenceName: hibernate_sequence
 
-
+- changeSet:
+    id: 1537363659943-2
+    author: adib (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: languages_pkey
+            name: language_id
+            type: BIGINT
+        - column:
+            name: language_name
+            type: VARCHAR(30)
+        tableName: languages
+- changeSet:
+    id: 1537363659943-3
+    author: adib (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: resource_language_pkey
+            name: resource_id
+            type: BIGINT
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: resource_language_pkey
+            name: language_id
+            type: BIGINT
+        tableName: resource_language
+- changeSet:
+    id: 1537363659943-4
+    author: adib (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              primaryKey: true
+              primaryKeyName: resources_pkey
+            name: resource_id
+            type: BIGINT
+        - column:
+            name: resource_name
+            type: VARCHAR(30)
+        - column:
+            name: resource_url
+            type: VARCHAR(255)
+        tableName: resources
+- changeSet:
+    id: 1537363659943-5
+    author: adib (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: language_id
+        baseTableName: resource_language
+        constraintName: fk9jgdfbg4rb9w8su34f3qpvabu
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: language_id
+        referencedTableName: languages
+        validate: true
+- changeSet:
+    id: 1537363659943-6
+    author: adib (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: resource_id
+        baseTableName: resource_language
+        constraintName: fkneix7drajjjqxfgox4hq7nfho
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: resource_id
+        referencedTableName: resources
+        validate: true
 
