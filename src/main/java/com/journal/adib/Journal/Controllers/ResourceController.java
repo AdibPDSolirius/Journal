@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
+import java.util.Set;
 
 
 @Controller
@@ -21,6 +22,38 @@ public class ResourceController {
     @GetMapping("/resources")
     public String find(Model model) {
         List<Resource> resources = resourceService.findAll();
+        model.addAttribute("resources",resources);
+        return "resource-list";
+
+    }
+
+    @GetMapping("/resources/language/{languageId}")
+    public String findByLanguageId(@PathVariable(value="languageId") Long languageId, Model model) {
+        Set<Resource> resources = resourceService.filterResourcesByLanguageId(languageId);
+        model.addAttribute("resources",resources);
+        return "resource-list";
+
+    }
+
+    @GetMapping("/resources/framework/{frameworkId}")
+    public String findByFrameworkId(@PathVariable(value="frameworkId") Long frameworkId, Model model) {
+        Set<Resource> resources = resourceService.filterResourcesByFrameworkId(frameworkId);
+        model.addAttribute("resources",resources);
+        return "resource-list";
+
+    }
+
+    @GetMapping("/resources/database/{databaseId}")
+    public String findByDatabaseId(@PathVariable(value="databaseId") Long databaseId, Model model) {
+        Set<Resource> resources = resourceService.filterResourcesByLanguageId(databaseId);
+        model.addAttribute("resources",resources);
+        return "resource-list";
+
+    }
+
+    @GetMapping("/resources/library/{libraryId}")
+    public String findByLibraryId(@PathVariable(value="libraryId") Long libraryId, Model model) {
+        Set<Resource> resources = resourceService.filterResourcesByLanguageId(libraryId);
         model.addAttribute("resources",resources);
         return "resource-list";
 

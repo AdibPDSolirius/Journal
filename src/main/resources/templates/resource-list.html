@@ -10,11 +10,14 @@
         <tr>
             <th>Name</th>
             <th>URL</th>
-            <th>Language</th>
+            <th>Languages</th>
+            <th>Frameworks</th>
+            <th>Databases</th>
+            <th>Libraries</th>
         </tr>
         <tr th:each="resource : ${resources}">
-            <td th:text="${resource.getResourceName()}"></td>
-            <td th:text="${resource.getResourceURL()}"></td>
+            <td th:text="${resource.getName()}"></td>
+            <td th:text="${resource.getUrl()}"></td>
             <td th:text="${resource.getLanguages()}"></td>
             <td th:text="${resource.getFrameworks()}"></td>
             <td th:text="${resource.getDatabases()}"></td>

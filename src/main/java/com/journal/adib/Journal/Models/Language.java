@@ -14,7 +14,6 @@ import java.util.Set;
 public class Language extends Technology{
 
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "language_id")
     private Long id;

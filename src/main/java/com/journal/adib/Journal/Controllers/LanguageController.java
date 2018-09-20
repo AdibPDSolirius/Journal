@@ -23,7 +23,6 @@ public class LanguageController {
         List<Language> languages = (List<Language>) languageService.findAll();
         model.addAttribute("languages",languages);
         return "language-list";
-
     }
 
     @PostMapping("/languages")

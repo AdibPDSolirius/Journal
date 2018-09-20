@@ -1,10 +1,7 @@
 package com.journal.adib.Journal.Models;
 
-import com.journal.adib.Journal.Models.Resource;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,7 +11,6 @@ import java.util.Set;
 public class Library extends Technology{
 
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "library_id")
     private Long id;

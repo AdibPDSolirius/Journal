@@ -70,7 +70,6 @@ public class Resource {
     }
 
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "resource_id")
     private Long id;
@@ -107,7 +106,7 @@ public class Resource {
     private Set<Database> databases = new HashSet<>();
 
     @ManyToMany()
-    @JoinTable(name = "library_framework",
+    @JoinTable(name = "resource_library",
             joinColumns = @JoinColumn(name = "resource_id"),
             inverseJoinColumns = @JoinColumn(name = "library_id")
     )
