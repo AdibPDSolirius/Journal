@@ -34,8 +34,8 @@ public class LibraryController {
 
     @DeleteMapping("/libraries/{libraryId}")
     @ResponseBody
-    public void deleteById(@PathVariable Long id){
-        libraryService.deleteById(id);
+    public void deleteById(@PathVariable(value="libraryId") Long libraryId){
+        libraryService.deleteById(libraryId);
     }
 
 

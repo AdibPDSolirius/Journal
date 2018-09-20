@@ -1,5 +1,6 @@
 package com.journal.adib.Journal.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.journal.adib.Journal.Models.Resource;
 
 import javax.persistence.*;
@@ -40,6 +41,7 @@ public class Language extends Technology{
     }
 
     @ManyToMany(mappedBy = "languages")
+    @JsonIgnore
     private Set<Resource> resources = new HashSet<>();
 
     public String getName() {

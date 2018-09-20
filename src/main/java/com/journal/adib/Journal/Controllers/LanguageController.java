@@ -33,8 +33,8 @@ public class LanguageController {
 
     @DeleteMapping("/languages/{languageId}")
     @ResponseBody
-    public void deleteById(@PathVariable Long id){
-        languageService.deleteById(id);
+    public void deleteById(@PathVariable(value="languageId") Long languageId){
+        languageService.deleteById(languageId);
     }
 
 

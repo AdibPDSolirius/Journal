@@ -27,7 +27,7 @@ public class DatabaseController {
 
     @DeleteMapping("/databases/{databaseId}")
     @ResponseBody
-    public void deleteById(@PathVariable Long id){
-        databaseService.deleteById(id);
+    public void deleteById(@PathVariable(value="databaseId") Long databaseId){
+        databaseService.deleteById(databaseId);
     }
 }

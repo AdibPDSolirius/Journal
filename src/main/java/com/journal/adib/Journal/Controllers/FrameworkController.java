@@ -34,7 +34,7 @@ public class FrameworkController {
 
     @DeleteMapping("/frameworks/{frameworkId}")
     @ResponseBody
-    public void deleteById(@PathVariable Long id){ frameworkService.deleteById(id); }
+    public void deleteById(@PathVariable(value="frameworkId") Long frameworkId){ frameworkService.deleteById(frameworkId); }
 
 
 }

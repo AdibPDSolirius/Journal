@@ -1,5 +1,7 @@
 package com.journal.adib.Journal.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -21,6 +23,7 @@ public class Database extends Technology {
     private String name;
 
     @ManyToMany(mappedBy = "databases")
+    @JsonIgnore
     private Set<Resource> resources = new HashSet<>();
 
     public Set<Resource> getResources() {

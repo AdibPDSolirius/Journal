@@ -18,12 +18,18 @@ public class ResourceController {
     @Autowired
     ResourceService resourceService;
 
+//
+//    @GetMapping("/resources")
+//    public String find(Model model) {
+//        List<Resource> resources = resourceService.findAll();
+//        model.addAttribute("resources",resources);
+//        return "resource-list";
+//
+//    }
 
     @GetMapping("/resources")
-    public String find(Model model) {
-        List<Resource> resources = resourceService.findAll();
-        model.addAttribute("resources",resources);
-        return "resource-list";
+    public @ResponseBody List<Resource> find() {
+        return resourceService.findAll();
 
     }
 
@@ -45,7 +51,7 @@ public class ResourceController {
 
     @GetMapping("/resources/database/{databaseId}")
     public String findByDatabaseId(@PathVariable(value="databaseId") Long databaseId, Model model) {
-        Set<Resource> resources = resourceService.filterResourcesByLanguageId(databaseId);
+        Set<Resource> resources = resourceService.filterResourcesByDatabaseId(databaseId);
         model.addAttribute("resources",resources);
         return "resource-list";
 
@@ -53,7 +59,7 @@ public class ResourceController {
 
     @GetMapping("/resources/library/{libraryId}")
     public String findByLibraryId(@PathVariable(value="libraryId") Long libraryId, Model model) {
-        Set<Resource> resources = resourceService.filterResourcesByLanguageId(libraryId);
+        Set<Resource> resources = resourceService.filterResourcesByLibraryId(libraryId);
         model.addAttribute("resources",resources);
         return "resource-list";
 
@@ -67,8 +73,8 @@ public class ResourceController {
 
     @DeleteMapping("/resource/{resourceId}")
     @ResponseBody
-    public void deleteById(@PathVariable Long id){
-        resourceService.deleteById(id);
+    public void deleteById(@PathVariable(value="resourceId") Long resourceId){
+        resourceService.deleteById(resourceId);
     }
 
 

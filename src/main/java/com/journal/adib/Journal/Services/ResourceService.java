@@ -30,9 +30,7 @@ public class ResourceService {
 
 
     public List<Resource> findAll(){
-        List<Resource> resources =  resourceRepository.findAll();
-
-        return resources;
+        return resourceRepository.findAll();
     }
 
     public Resource save(Resource resource){
