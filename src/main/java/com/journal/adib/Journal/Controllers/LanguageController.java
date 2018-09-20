@@ -19,7 +19,7 @@ public class LanguageController {
 
 
     @GetMapping("/languages")
-    public String findResources(Model model) {
+    public String find(Model model) {
         List<Language> languages = (List<Language>) languageService.findAll();
         model.addAttribute("languages",languages);
         return "language-list";
@@ -28,8 +28,14 @@ public class LanguageController {
 
     @PostMapping("/languages")
     @ResponseBody
-    public Language createLanguage(@RequestBody Language language){
-        return languageService.saveLanguage(language);
+    public Language create(@RequestBody Language language){
+        return languageService.save(language);
+    }
+
+    @DeleteMapping("/languages/{languageId}")
+    @ResponseBody
+    public void deleteById(@PathVariable Long id){
+        languageService.deleteById(id);
     }
 
 

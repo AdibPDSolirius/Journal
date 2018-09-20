@@ -11,9 +11,9 @@
         <th>Name</th>
         <th>Resources</th>
     </tr>
-    <tr th:each="language : ${languages}">
-        <td th:text="${language.getName()}"></td>
-        <td th:text="${language.getResources()}"></td>
+    <tr th:each="database : ${databases}">
+        <td th:text="${database.getName()}"></td>
+        <td th:text="${database.getResources()}"></td>
     </tr>
 </table>
 </body>

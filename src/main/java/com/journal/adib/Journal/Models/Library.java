@@ -10,27 +10,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name="languages")
-public class Language extends Technology{
+@Table(name="libraries")
+public class Library extends Technology{
 
     @Id
     @NotNull
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "language_id")
+    @Column(name = "library_id")
     private Long id;
 
     @NotBlank
     @Size(max = 30)
-    @Column(name="language_name")
+    @Column(name="library_name")
     private String name;
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @ManyToMany(mappedBy = "libraries")
+    private Set<Resource> resources = new HashSet<>();
 
     public Set<Resource> getResources() {
         return resources;
@@ -40,8 +36,13 @@ public class Language extends Technology{
         this.resources = resources;
     }
 
-    @ManyToMany(mappedBy = "languages")
-    private Set<Resource> resources = new HashSet<>();
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -54,4 +55,5 @@ public class Language extends Technology{
     public String toString(){
         return this.getName();
     }
+
 }

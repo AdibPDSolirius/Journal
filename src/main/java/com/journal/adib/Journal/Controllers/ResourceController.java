@@ -19,7 +19,7 @@ public class ResourceController {
 
 
     @GetMapping("/resources")
-    public String findResources(Model model) {
+    public String find(Model model) {
         List<Resource> resources = resourceService.findAll();
         model.addAttribute("resources",resources);
         return "resource-list";
@@ -28,8 +28,14 @@ public class ResourceController {
 
     @PostMapping("/resources")
     @ResponseBody
-    public Resource createResource(@RequestBody Resource resource){
-        return resourceService.saveResource(resource);
+    public Resource create(@RequestBody Resource resource){
+        return resourceService.save(resource);
+    }
+
+    @DeleteMapping("/resource/{resourceId}")
+    @ResponseBody
+    public void deleteById(@PathVariable Long id){
+        resourceService.deleteById(id);
     }
 
 

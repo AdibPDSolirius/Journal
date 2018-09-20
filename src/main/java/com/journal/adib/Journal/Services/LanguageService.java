@@ -17,9 +17,10 @@ public class LanguageService {
         return (List<Language>) languageRepository.findAll();
     }
 
-    public Language saveLanguage(Language language){
+    public Language save(Language language){
         return languageRepository.save(language);
     }
 
-    public void deleteLanguage(Long id) { languageRepository.deleteById(id); }
+    public void deleteById(Long id) { languageRepository.deleteById(id); }
+
 }

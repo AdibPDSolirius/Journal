@@ -20,10 +20,10 @@ public class ResourceService {
         return resources;
     }
 
-    public Resource saveResource(Resource resource){
+    public Resource save(Resource resource){
         return resourceRepository.save(resource);
     }
 
-    public void deleteResource(Long resourceId){ resourceRepository.deleteById(resourceId); };
+    public void deleteById(Long id){ resourceRepository.deleteById(id); };
 
 }
