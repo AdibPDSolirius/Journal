@@ -1,12 +1,15 @@
 package com.journal.adib.Journal.Services;
 
+import com.journal.adib.Journal.Models.Language;
 import com.journal.adib.Journal.Models.Library;
 import com.journal.adib.Journal.Models.Resource;
 import com.journal.adib.Journal.Repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -33,12 +36,16 @@ public class ResourceService {
         return resourceRepository.findAll();
     }
 
+    public Optional<Resource> findById(Long id){
+        return resourceRepository.findById(id);
+    }
+
     public Resource save(Resource resource){
         return resourceRepository.save(resource);
     }
 
-    public Set<Resource> filterResourcesByLanguageId(Long languageId){
-        return languageRepository.findById(languageId).get().getResources();
+    public Optional<Language> filterResourcesByLanguageId(Long languageId){
+        return languageRepository.findById(languageId);
     }
 
     public Set<Resource> filterResourcesByFrameworkId(Long frameworkId){
@@ -53,6 +60,10 @@ public class ResourceService {
         return databaseRepository.findById(databaseId).get().getResources();
     }
 
-    public void deleteById(Long id){ resourceRepository.deleteById(id); };
+    public ResponseEntity deleteById(Long id){
+        resourceRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
 
 }
