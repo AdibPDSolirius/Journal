@@ -89,10 +89,6 @@ public class ResourceController {
 
     @DeleteMapping("/resources/{resourceId}")
     public ResponseEntity<Resource> deleteResource(@PathVariable Long resourceId) {
-        Optional<Resource> resource = resourceService.findById(resourceId);
-        if(resource.isPresent()){
-            return resourceService.deleteById(resourceId);
-        }
         return resourceService.deleteById(resourceId);
     }
 

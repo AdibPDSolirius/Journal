@@ -36,16 +36,16 @@ public class ResourceService {
         return resourceRepository.findAll();
     }
 
-    public Optional<Resource> findById(Long id){
-        return resourceRepository.findById(id);
+    public Resource findById(Long id){
+        return resourceRepository.findById(id).get();
     }
 
     public Resource save(Resource resource){
         return resourceRepository.save(resource);
     }
 
-    public Optional<Language> filterResourcesByLanguageId(Long languageId){
-        return languageRepository.findById(languageId);
+    public Set<Resource> filterResourcesByLanguageId(Long languageId){
+        return languageRepository.findById(languageId).get().getResources();
     }
 
     public Set<Resource> filterResourcesByFrameworkId(Long frameworkId){
