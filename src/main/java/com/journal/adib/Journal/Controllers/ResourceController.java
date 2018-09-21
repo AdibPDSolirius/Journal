@@ -3,6 +3,8 @@ package com.journal.adib.Journal.Controllers;
 import com.journal.adib.Journal.Models.Resource;
 import com.journal.adib.Journal.Services.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,17 +18,25 @@ import java.util.Set;
 
 
 @Controller
+@CrossOrigin(origins = "http://localhost:4200")
 public class ResourceController {
 
     @Autowired
     ResourceService resourceService;
 
 
+//    @GetMapping("/resources")
+//    @ResponseBody
+//    public String find(Model model) {
+//        List<Resource> resources = resourceService.findAll();
+//        model.addAttribute("resources",resources);
+//        return "resource-list";
+//
+//    }
+
     @GetMapping("/resources")
-    public String find(Model model) {
-        List<Resource> resources = resourceService.findAll();
-        model.addAttribute("resources",resources);
-        return "resource-list";
+    public @ResponseBody List<Resource> find(Model model) {
+        return resourceService.findAll();
 
     }
 
