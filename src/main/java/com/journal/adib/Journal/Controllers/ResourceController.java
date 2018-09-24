@@ -1,9 +1,9 @@
 package com.journal.adib.Journal.Controllers;
 
+import com.journal.adib.Journal.ErrorHandling.EntityNotFoundException;
 import com.journal.adib.Journal.Models.Resource;
 import com.journal.adib.Journal.Services.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -11,9 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 
@@ -40,14 +38,19 @@ public class ResourceController {
 
     }
 
-    @GetMapping("/resources/{resourceId}")
-    public String find(@PathVariable(value="resourceId") Long resoureceId, Model model) {
-        Resource resource = resourceService.findById(resoureceId);
-        List<Resource> resources = new ArrayList<>();
-        resources.add(resource);
-        model.addAttribute("resources",resources);
-        return "resource-list";
+//    @GetMapping("/resources/{resourceId}")
+//    public String find(@PathVariable(value="resourceId") Long resoureceId, Model model) {
+//        Resource resource = resourceService.findById(resoureceId);
+//        List<Resource> resources = new ArrayList<>();
+//        resources.add(resource);
+//        model.addAttribute("resources",resources);
+//        return "resource-list";
+//
+//    }
 
+    @GetMapping("/resources/{resourceId}")
+    public @ResponseBody ResponseEntity<Resource> find(@PathVariable(value="resourceId") Long resoureceId) throws EntityNotFoundException {
+        return ResponseEntity.status(HttpStatus.OK).body(resourceService.findById(resoureceId));
     }
 
     @GetMapping("/resources/language/{languageId}")

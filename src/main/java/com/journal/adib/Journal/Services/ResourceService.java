@@ -1,10 +1,12 @@
 package com.journal.adib.Journal.Services;
 
+import com.journal.adib.Journal.ErrorHandling.EntityNotFoundException;
 import com.journal.adib.Journal.Models.Language;
 import com.journal.adib.Journal.Models.Library;
 import com.journal.adib.Journal.Models.Resource;
 import com.journal.adib.Journal.Repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +38,13 @@ public class ResourceService {
         return resourceRepository.findAll();
     }
 
-    public Resource findById(Long id){
-        return resourceRepository.findById(id).get();
+    public Resource findById(Long id) throws EntityNotFoundException{
+        Optional<Resource> or = resourceRepository.findById(id);
+        if(or.isPresent()){
+            return or.get();
+        }else{
+            throw new EntityNotFoundException("Resource not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     public Resource save(Resource resource){
