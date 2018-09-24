@@ -1,8 +1,8 @@
 package com.journal.adib.Journal.Controllers;
 
-import com.journal.adib.Journal.ErrorHandling.EntityNotFoundException;
 import com.journal.adib.Journal.ErrorHandling.ErrorHandler;
-import com.journal.adib.Journal.Models.Resource;
+import com.journal.adib.Journal.ErrorHandling.JournalException;
+import com.journal.adib.Journal.Models.*;
 import com.journal.adib.Journal.Services.ResourceService;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,15 +12,21 @@ import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.hamcrest.Matchers.*;
+import java.util.*;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+
+
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ResourceControllerTest {
@@ -43,19 +49,15 @@ public class ResourceControllerTest {
     }
 
     @Test
-    public void findById_NotFound_ShouldReturnHttpStatusCode404() throws EntityNotFoundException, Exception {
-        when(resourceServiceMock.findById(1L)).thenThrow(new EntityNotFoundException("Resource not found", HttpStatus.NOT_FOUND));
+    public void findById_NotFound_ShouldReturnHttpStatusCode400() throws Exception {
+        when(resourceServiceMock.findById(1L)).thenThrow(new JournalException("Resource not found", HttpStatus.NOT_FOUND));
 
-        //Checks headers
         MvcResult result = mockMvc.perform(get("/resources/{resourceId}", 1L))
                 .andExpect(status().isNotFound())
                 .andReturn();
-        //Checks content body
-        assertEquals(result.getResponse().getContentAsString(), "Resource not found");
+        assertEquals("Resource not found", result.getResponse().getContentAsString());
 
-        //Verifies the "findById" service only ran once
         verify(resourceServiceMock, times(1)).findById(1L);
-        //Verifies no other methods in our mock service were called
         verifyNoMoreInteractions(resourceServiceMock);
     }
 
@@ -65,6 +67,7 @@ public class ResourceControllerTest {
         r1.setName("Resource1");
         r1.setUrl("Resource1Url");
         r1.setId(new Long(1));
+
         when(resourceServiceMock.findById(1L)).thenReturn(r1);
 
         mockMvc.perform(get("/resources/{resourceId}", 1L))
@@ -76,5 +79,335 @@ public class ResourceControllerTest {
         verify(resourceServiceMock, times(1)).findById(1L);
         verifyNoMoreInteractions(resourceServiceMock);
     }
+
+    @Test
+    public void findAll_NotFound_ShouldReturnHttpStatusCode204() throws Exception {
+        when(resourceServiceMock.findAll()).thenThrow(new JournalException("No resources found", HttpStatus.NO_CONTENT));
+
+        MvcResult result = mockMvc.perform(get("/resources"))
+                .andExpect(status().isNoContent())
+                .andReturn();
+        assertEquals(result.getResponse().getContentAsString(), "No resources found");
+
+        verify(resourceServiceMock, times(1)).findAll();
+        verifyNoMoreInteractions(resourceServiceMock);
+    }
+
+    @Test
+    public void findAll_Found_ShouldReturnFoundResourceEntries() throws Exception {
+        Resource r1 = new Resource();
+        r1.setName("Resource1");
+        r1.setUrl("Resource1Url");
+        r1.setId(new Long(1));
+
+        Resource r2 = new Resource();
+        r2.setName("Resource2");
+        r2.setUrl("Resource2Url");
+        r2.setId(new Long(2));
+
+        Language l1 = new Language();
+        l1.setId(new Long(3));
+        l1.setName("Language1");
+
+        Set<Language> languageSet = new HashSet<>();
+        languageSet.add(l1);
+
+        r2.setLanguages(languageSet);
+
+
+        when(resourceServiceMock.findAll()).thenReturn(Arrays.asList(r1, r2));
+
+
+        mockMvc.perform(get("/resources"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[0].name", is("Resource1")))
+                .andExpect(jsonPath("$[0].url", is("Resource1Url")))
+                .andExpect(jsonPath("$[1].id", is(2)))
+                .andExpect(jsonPath("$[1].name", is("Resource2")))
+                .andExpect(jsonPath("$[1].url", is("Resource2Url")))
+                .andExpect(jsonPath("$[1].languages", hasSize(1)))
+                .andExpect(jsonPath("$[1].languages[0].id", is(3)))
+                .andExpect(jsonPath("$[1].languages[0].name", is("Language1")));
+
+        verify(resourceServiceMock, times(1)).findAll();
+        verifyNoMoreInteractions(resourceServiceMock);
+    }
+
+    @Test
+    public void create_ValidationFailed_ShouldReturnHttpStatusCode400() throws Exception {
+        Resource r1 = new Resource();
+        r1.setName(TestUtil.createStringWithLength(31));
+        r1.setUrl("Resource1Url");
+        r1.setId(new Long(1));
+
+
+        mockMvc.perform(post("/resources")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(r1)))
+                .andExpect(status().isBadRequest());
+
+        verifyZeroInteractions(resourceServiceMock);
+    }
+
+    @Test
+    public void create_NotCreated_ShouldReturnHttpStatusCode500() throws Exception {
+        Resource r1 = new Resource();
+        r1.setName("Hello");
+        r1.setUrl("Resource1Url");
+        r1.setId(new Long(1));
+
+        when(resourceServiceMock.save(any(Resource.class))).thenThrow(new JournalException("Failed to create new resource", HttpStatus.INTERNAL_SERVER_ERROR));
+
+        MvcResult result = mockMvc.perform(post("/resources")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(r1)))
+                .andExpect(status().isInternalServerError())
+                .andReturn();
+        assertEquals("Failed to create new resource", result.getResponse().getContentAsString());
+
+        verify(resourceServiceMock, times(1)).save(any(Resource.class));
+        verifyNoMoreInteractions(resourceServiceMock);
+    }
+
+    @Test
+    public void create_Created_ShouldReturnCreatedResource() throws Exception {
+        Resource r1 = new Resource();
+        r1.setName("Resource1");
+        r1.setUrl("Resource1Url");
+        r1.setId(new Long(1));
+
+        Language l1 = new Language();
+        l1.setId(new Long(3));
+        l1.setName("Language1");
+
+        Set<Language> languageSet = new HashSet<>();
+        languageSet.add(l1);
+
+        r1.setLanguages(languageSet);
+
+        when(resourceServiceMock.save(any(Resource.class))).thenReturn(r1);
+
+
+        mockMvc.perform(post("/resources")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(r1)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is("Resource1")))
+                .andExpect(jsonPath("$.url", is("Resource1Url")))
+                .andExpect(jsonPath("$.languages", hasSize(1)))
+                .andExpect(jsonPath("$.languages[0].id", is(3)))
+                .andExpect(jsonPath("$.languages[0].name", is("Language1")));
+
+        verify(resourceServiceMock, times(1)).save(any(Resource.class));
+        verifyNoMoreInteractions(resourceServiceMock);
+    }
+
+    @Test
+    public void filterByLanguageId_Found_ShouldReturnFoundResourceEntries() throws Exception {
+        Resource r1 = new Resource();
+        r1.setName("Resource1");
+        r1.setUrl("Resource1Url");
+        r1.setId(new Long(1));
+
+        Resource r2 = new Resource();
+        r2.setName("Resource2");
+        r2.setUrl("Resource2Url");
+        r2.setId(new Long(2));
+
+        Language l1 = new Language();
+        l1.setId(new Long(3));
+        l1.setName("Language1");
+
+        Set<Language> languageSet = new HashSet<>();
+        languageSet.add(l1);
+
+        r2.setLanguages(languageSet);
+
+
+        when(resourceServiceMock.filterResourcesByLanguageId(3L)).thenReturn(Arrays.asList(r2));
+
+
+        mockMvc.perform(get("/resources/language/{languageId}", 3L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(2)))
+                .andExpect(jsonPath("$[0].name", is("Resource2")))
+                .andExpect(jsonPath("$[0].url", is("Resource2Url")))
+                .andExpect(jsonPath("$[0].languages[0].id", is(3)))
+                .andExpect(jsonPath("$[0].languages[0].name", is("Language1")));
+
+        verify(resourceServiceMock, times(1)).filterResourcesByLanguageId(3L);
+        verifyNoMoreInteractions(resourceServiceMock);
+    }
+
+    @Test
+    public void filterByLanguageId_NotFound_ShouldReturnHttpStatusCode400() throws Exception {
+        when(resourceServiceMock.filterResourcesByLanguageId(1L)).thenThrow(new JournalException("No resources found", HttpStatus.NOT_FOUND));
+
+        MvcResult result = mockMvc.perform(get("/resources/language/{languageId}", 1L))
+                .andExpect(status().isNotFound())
+                .andReturn();
+        assertEquals("No resources found", result.getResponse().getContentAsString());
+
+        verify(resourceServiceMock, times(1)).filterResourcesByLanguageId(1L);
+        verifyNoMoreInteractions(resourceServiceMock);
+    }
+
+    @Test
+    public void filterByFrameworkId_Found_ShouldReturnFoundResourceEntries() throws Exception {
+        Resource r1 = new Resource();
+        r1.setName("Resource1");
+        r1.setUrl("Resource1Url");
+        r1.setId(new Long(1));
+
+        Resource r2 = new Resource();
+        r2.setName("Resource2");
+        r2.setUrl("Resource2Url");
+        r2.setId(new Long(2));
+
+        Framework f1 = new Framework();
+        f1.setId(new Long(3));
+        f1.setName("Framework1");
+
+        Set<Framework> frameworkSet = new HashSet<>();
+        frameworkSet.add(f1);
+
+        r2.setFrameworks(frameworkSet);
+
+
+        when(resourceServiceMock.filterResourcesByFrameworkId(3L)).thenReturn(Arrays.asList(r2));
+
+
+        mockMvc.perform(get("/resources/framework/{frameworkId}", 3L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(2)))
+                .andExpect(jsonPath("$[0].name", is("Resource2")))
+                .andExpect(jsonPath("$[0].url", is("Resource2Url")))
+                .andExpect(jsonPath("$[0].frameworks[0].id", is(3)))
+                .andExpect(jsonPath("$[0].frameworks[0].name", is("Framework1")));
+
+        verify(resourceServiceMock, times(1)).filterResourcesByFrameworkId(3L);
+        verifyNoMoreInteractions(resourceServiceMock);
+    }
+
+    @Test
+    public void filterByFrameworkId_NotFound_ShouldReturnHttpStatusCode400() throws Exception {
+        when(resourceServiceMock.filterResourcesByFrameworkId(1L)).thenThrow(new JournalException("No resources found", HttpStatus.NOT_FOUND));
+
+        MvcResult result = mockMvc.perform(get("/resources/framework/{frameworkId}", 1L))
+                .andExpect(status().isNotFound())
+                .andReturn();
+        assertEquals("No resources found", result.getResponse().getContentAsString());
+
+        verify(resourceServiceMock, times(1)).filterResourcesByFrameworkId(1L);
+        verifyNoMoreInteractions(resourceServiceMock);
+    }
+
+    @Test
+    public void filterByLibraryId_Found_ShouldReturnFoundResourceEntries() throws Exception {
+        Resource r1 = new Resource();
+        r1.setName("Resource1");
+        r1.setUrl("Resource1Url");
+        r1.setId(new Long(1));
+
+        Resource r2 = new Resource();
+        r2.setName("Resource2");
+        r2.setUrl("Resource2Url");
+        r2.setId(new Long(2));
+
+        Library l1 = new Library();
+        l1.setId(new Long(3));
+        l1.setName("Library1");
+
+        Set<Library> librarySet = new HashSet<>();
+        librarySet.add(l1);
+
+        r2.setLibraries(librarySet);
+
+
+        when(resourceServiceMock.filterResourcesByLibraryId(3L)).thenReturn(Arrays.asList(r2));
+
+
+        mockMvc.perform(get("/resources/library/{libraryId}", 3L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(2)))
+                .andExpect(jsonPath("$[0].name", is("Resource2")))
+                .andExpect(jsonPath("$[0].url", is("Resource2Url")))
+                .andExpect(jsonPath("$[0].libraries[0].id", is(3)))
+                .andExpect(jsonPath("$[0].libraries[0].name", is("Library1")));
+
+        verify(resourceServiceMock, times(1)).filterResourcesByLibraryId(3L);
+        verifyNoMoreInteractions(resourceServiceMock);
+    }
+
+    @Test
+    public void filterByLibraryId_NotFound_ShouldReturnHttpStatusCode400() throws Exception {
+        when(resourceServiceMock.filterResourcesByLibraryId(1L)).thenThrow(new JournalException("No resources found", HttpStatus.NOT_FOUND));
+
+        MvcResult result = mockMvc.perform(get("/resources/library/{libraryId}", 1L))
+                .andExpect(status().isNotFound())
+                .andReturn();
+        assertEquals("No resources found", result.getResponse().getContentAsString());
+
+        verify(resourceServiceMock, times(1)).filterResourcesByLibraryId(1L);
+        verifyNoMoreInteractions(resourceServiceMock);
+    }
+
+    @Test
+    public void filterByDatabaseId_Found_ShouldReturnFoundResourceEntries() throws Exception {
+        Resource r1 = new Resource();
+        r1.setName("Resource1");
+        r1.setUrl("Resource1Url");
+        r1.setId(new Long(1));
+
+        Resource r2 = new Resource();
+        r2.setName("Resource2");
+        r2.setUrl("Resource2Url");
+        r2.setId(new Long(2));
+
+        Database d1 = new Database();
+        d1.setId(new Long(3));
+        d1.setName("Database1");
+
+        Set<Database> databaseSet = new HashSet<>();
+        databaseSet.add(d1);
+
+        r2.setDatabases(databaseSet);
+
+
+        when(resourceServiceMock.filterResourcesByDatabaseId(3L)).thenReturn(Arrays.asList(r2));
+
+
+        mockMvc.perform(get("/resources/database/{databaseId}", 3L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(2)))
+                .andExpect(jsonPath("$[0].name", is("Resource2")))
+                .andExpect(jsonPath("$[0].url", is("Resource2Url")))
+                .andExpect(jsonPath("$[0].databases[0].id", is(3)))
+                .andExpect(jsonPath("$[0].databases[0].name", is("Database1")));
+
+        verify(resourceServiceMock, times(1)).filterResourcesByDatabaseId(3L);
+        verifyNoMoreInteractions(resourceServiceMock);
+    }
+
+    @Test
+    public void filterByDatabaseId_NotFound_ShouldReturnHttpStatusCode400() throws Exception {
+        when(resourceServiceMock.filterResourcesByDatabaseId(1L)).thenThrow(new JournalException("No resources found", HttpStatus.NOT_FOUND));
+
+        MvcResult result = mockMvc.perform(get("/resources/database/{databaseId}", 1L))
+                .andExpect(status().isNotFound())
+                .andReturn();
+        assertEquals("No resources found", result.getResponse().getContentAsString());
+
+        verify(resourceServiceMock, times(1)).filterResourcesByDatabaseId(1L);
+        verifyNoMoreInteractions(resourceServiceMock);
+    }
+
 
 }

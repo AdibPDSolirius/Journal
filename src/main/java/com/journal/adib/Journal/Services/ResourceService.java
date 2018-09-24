@@ -1,6 +1,6 @@
 package com.journal.adib.Journal.Services;
 
-import com.journal.adib.Journal.ErrorHandling.EntityNotFoundException;
+import com.journal.adib.Journal.ErrorHandling.JournalException;
 import com.journal.adib.Journal.Models.Language;
 import com.journal.adib.Journal.Models.Library;
 import com.journal.adib.Journal.Models.Resource;
@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -21,56 +22,76 @@ public class ResourceService {
     private ResourceRepository resourceRepository;
 
     @Autowired
-    private LanguageRepository languageRepository;
+    private LanguageService languageService;
 
     @Autowired
-    private FrameworkRepository frameworkRepository;
+    private FrameworkService frameworkService;
 
     @Autowired
-    private LibraryRepository libraryRepository;
+    private LibraryService libraryService;
 
     @Autowired
-    private DatabaseRepository databaseRepository;
+    private DatabaseService databaseService;
 
 
 
-    public List<Resource> findAll(){
-        return resourceRepository.findAll();
+    public List<Resource> findAll() throws JournalException{
+        List<Resource> resourceList = resourceRepository.findAll();
+            if(resourceList.size() != 0){
+                return resourceList;
+            }else{
+                throw new JournalException("No resources found", HttpStatus.NO_CONTENT);
+            }
     }
 
-    public Resource findById(Long id) throws EntityNotFoundException{
+    public Resource findById(Long id) throws JournalException {
         Optional<Resource> or = resourceRepository.findById(id);
         if(or.isPresent()){
             return or.get();
         }else{
-            throw new EntityNotFoundException("Resource not found", HttpStatus.NOT_FOUND);
+            throw new JournalException("Resource not found", HttpStatus.NOT_FOUND);
         }
     }
 
-    public Resource save(Resource resource){
-        return resourceRepository.save(resource);
+    public Resource save(Resource resource) throws JournalException{
+        Resource savedResource = resourceRepository.save(resource);
+        if(savedResource != null){
+            return savedResource;
+        }else{
+            throw new JournalException("Failed to save resource", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public Set<Resource> filterResourcesByLanguageId(Long languageId){
-        return languageRepository.findById(languageId).get().getResources();
+    public List<Resource> filterResourcesByLanguageId(Long languageId) throws JournalException{
+        return processResourcesFound(languageService.findById(languageId).getResources());
     }
 
-    public Set<Resource> filterResourcesByFrameworkId(Long frameworkId){
-        return frameworkRepository.findById(frameworkId).get().getResources();
+    public List<Resource> filterResourcesByFrameworkId(Long frameworkId) throws JournalException{
+        return processResourcesFound(frameworkService.findById(frameworkId).getResources());
     }
 
-    public Set<Resource> filterResourcesByLibraryId(Long libraryId){
-        return libraryRepository.findById(libraryId).get().getResources();
+    public List<Resource> filterResourcesByLibraryId(Long libraryId) throws JournalException{
+        return processResourcesFound(libraryService.findById(libraryId).getResources());
     }
 
-    public Set<Resource> filterResourcesByDatabaseId(Long databaseId){
-        return databaseRepository.findById(databaseId).get().getResources();
+    public List<Resource> filterResourcesByDatabaseId(Long databaseId) throws JournalException{
+        return processResourcesFound(databaseService.findById(databaseId).getResources());
     }
 
-    public ResponseEntity deleteById(Long id){
+    public void deleteById(Long id){
         resourceRepository.deleteById(id);
-        return ResponseEntity.ok().build();
     }
+
+    private List<Resource> processResourcesFound(Set<Resource> resources) throws JournalException{
+        if(resources.size() != 0){
+            List<Resource> resourceList = new ArrayList<>();
+            resourceList.addAll(resources);
+            return resourceList;
+        }else{
+            throw new JournalException("No resources found", HttpStatus.NO_CONTENT);
+        }
+    }
+
 
 
 }

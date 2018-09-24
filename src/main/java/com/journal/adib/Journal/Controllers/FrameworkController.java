@@ -1,40 +1,47 @@
 package com.journal.adib.Journal.Controllers;
 
+import com.journal.adib.Journal.ErrorHandling.JournalException;
 import com.journal.adib.Journal.Models.Framework;
 import com.journal.adib.Journal.Models.Language;
 import com.journal.adib.Journal.Services.FrameworkService;
 import com.journal.adib.Journal.Services.LanguageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.validation.Valid;
 import java.util.List;
 
 
-@Controller
+@RestController
 public class FrameworkController {
 
     @Autowired
     FrameworkService frameworkService;
 
-
     @GetMapping("/frameworks")
-    public String find(Model model) {
-        List<Framework> frameworks = (List<Framework>) frameworkService.findAll();
-        model.addAttribute("frameworks",frameworks);
-        return "framework-list";
+    public ResponseEntity<List<Framework>> findAll() throws JournalException {
+        return ResponseEntity.status(HttpStatus.OK).body(frameworkService.findAll());
 
     }
 
+    @GetMapping("/frameworks/{frameworkId}")
+    public ResponseEntity<Framework> findById(@PathVariable(value="frameworkId") Long frameworkId) throws JournalException {
+        return ResponseEntity.status(HttpStatus.OK).body(frameworkService.findById(frameworkId));
+    }
+
     @PostMapping("/frameworks")
-    @ResponseBody
-    public Framework create(@RequestBody Framework framework){ return frameworkService.save(framework); }
+    public ResponseEntity<Framework> create(@Valid @RequestBody Framework framework) throws JournalException{
+        return ResponseEntity.status(HttpStatus.CREATED).body(frameworkService.save(framework));
+    }
 
     @DeleteMapping("/frameworks/{frameworkId}")
-    @ResponseBody
-    public void deleteById(@PathVariable(value="frameworkId") Long frameworkId){ frameworkService.deleteById(frameworkId); }
-
+    public void deleteById(@PathVariable(value="frameworkId") Long frameworkId){
+        frameworkService.deleteById(frameworkId);
+    }
 
 }

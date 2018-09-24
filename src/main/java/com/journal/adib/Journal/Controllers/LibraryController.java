@@ -1,39 +1,43 @@
 package com.journal.adib.Journal.Controllers;
 
+import com.journal.adib.Journal.ErrorHandling.JournalException;
+import com.journal.adib.Journal.Models.Language;
 import com.journal.adib.Journal.Models.Library;
 import com.journal.adib.Journal.Services.LibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.validation.Valid;
 import java.util.List;
 
 
-@Controller
+@RestController
 public class LibraryController {
 
     @Autowired
     LibraryService libraryService;
 
-
     @GetMapping("/libraries")
-    public String find(Model model) {
-        List<Library> libraries = (List<Library>) libraryService.findAll();
-        model.addAttribute("libraries",libraries);
-        return "library-list";
+    public ResponseEntity<List<Library>>  findAll() throws JournalException {
+        return ResponseEntity.status(HttpStatus.OK).body(libraryService.findAll());
 
+    }
+
+    @GetMapping("/libraries/{libraryId}")
+    public ResponseEntity<Library> findById(@PathVariable(value="libraryId") Long libraryId) throws JournalException {
+        return ResponseEntity.status(HttpStatus.OK).body(libraryService.findById(libraryId));
     }
 
     @PostMapping("/libraries")
-    @ResponseBody
-    public Library create(@RequestBody Library libraries){
-        return libraryService.save(libraries);
+    public ResponseEntity<Library> create(@Valid @RequestBody Library library) throws JournalException{
+        return ResponseEntity.status(HttpStatus.CREATED).body(libraryService.save(library));
     }
 
     @DeleteMapping("/libraries/{libraryId}")
-    @ResponseBody
     public void deleteById(@PathVariable(value="libraryId") Long libraryId){
         libraryService.deleteById(libraryId);
     }
