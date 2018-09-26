@@ -1,5 +1,7 @@
-package com.journal.adib.Journal.Controllers;
+package com.journal.adib.Journal.Controllers.ControllerUnitTests;
 
+import com.journal.adib.Journal.Controllers.DatabaseController;
+import com.journal.adib.Journal.Controllers.TestUtil;
 import com.journal.adib.Journal.ErrorHandling.ErrorHandler;
 import com.journal.adib.Journal.ErrorHandling.JournalException;
 import com.journal.adib.Journal.Models.*;
@@ -90,7 +92,7 @@ public class DatabaseControllerTest {
     }
 
     @Test
-    public void findAll_Found_ShouldReturnFoundFrameworkEntries() throws Exception {
+    public void findAll_Found_ShouldReturnFoundDatabaseEntries() throws Exception {
         Database d1 = new Database();
         d1.setName("Database1");
         d1.setId(new Long(1));
@@ -116,7 +118,7 @@ public class DatabaseControllerTest {
     }
 
     @Test
-    public void create_Created_ShouldReturnFrameworkResource() throws Exception {
+    public void create_Created_ShouldReturnCreatedDatabase() throws Exception {
         Database d1 = new Database();
         d1.setName("Database1");
         d1.setId(new Long(1));
@@ -163,6 +165,86 @@ public class DatabaseControllerTest {
 
 
         mockMvc.perform(post("/databases")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(d1)))
+                .andExpect(status().isBadRequest());
+
+        verifyZeroInteractions(databaseServiceMock);
+    }
+
+    @Test
+    public void update_Updated_ShouldReturnUpdatedDatabase() throws Exception {
+        Database d1 = new Database();
+        d1.setName("Database1");
+        d1.setId(new Long(1));
+
+        when(databaseServiceMock.findById(1L)).thenReturn(d1);
+        when(databaseServiceMock.save(any(Database.class))).thenReturn(d1);
+
+
+        mockMvc.perform(put("/databases/{databaseId}", 1L)
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(d1)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is("Database1")));
+
+        verify(databaseServiceMock, times(1)).findById(1L);
+        verify(databaseServiceMock, times(1)).save(any(Database.class));
+        verifyNoMoreInteractions(databaseServiceMock);
+    }
+
+    @Test
+    public void update_IdNotFound_ShouldReturnHttpStatusCode404() throws Exception {
+        Database d1 = new Database();
+        d1.setName("Database1");
+        d1.setId(new Long(1));
+
+        when(databaseServiceMock.findById(1L)).thenThrow(new JournalException("No database found", HttpStatus.NOT_FOUND));
+
+
+        MvcResult result = mockMvc.perform(put("/databases/{databaseId}", 1L)
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(d1)))
+                .andExpect(status().isNotFound())
+                .andReturn();
+        assertEquals("No database found", result.getResponse().getContentAsString());
+
+        verify(databaseServiceMock, times(1)).findById(1L);
+        verifyNoMoreInteractions(databaseServiceMock);
+    }
+
+    @Test
+    public void update_NotUpdated_ShouldReturnHttpStatusCode500() throws Exception {
+        Database d1 = new Database();
+        d1.setName("Database1");
+        d1.setId(new Long(1));
+
+
+        when(databaseServiceMock.findById(1L)).thenReturn(d1);
+        when(databaseServiceMock.save(any(Database.class))).thenThrow(new JournalException("Failed to update new database", HttpStatus.INTERNAL_SERVER_ERROR));
+
+
+        MvcResult result = mockMvc.perform(put("/databases/{databaseId}", 1L)
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(d1)))
+                .andExpect(status().isInternalServerError())
+                .andReturn();
+        assertEquals("Failed to update new database", result.getResponse().getContentAsString());
+
+        verify(databaseServiceMock, times(1)).findById(1L);
+        verify(databaseServiceMock, times(1)).save(any(Database.class));
+        verifyNoMoreInteractions(databaseServiceMock);
+    }
+
+    @Test
+    public void update_ValidationFailed_ShouldReturnHttpStatusCode400() throws Exception {
+        Database d1 = new Database();
+        d1.setName(TestUtil.createStringWithLength(31));
+        d1.setId(new Long(1));
+
+
+        mockMvc.perform(put("/databases/{databaseId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(d1)))
                 .andExpect(status().isBadRequest());

@@ -1,5 +1,7 @@
-package com.journal.adib.Journal.Controllers;
+package com.journal.adib.Journal.Controllers.ControllerUnitTests;
 
+import com.journal.adib.Journal.Controllers.LibraryController;
+import com.journal.adib.Journal.Controllers.TestUtil;
 import com.journal.adib.Journal.ErrorHandling.ErrorHandler;
 import com.journal.adib.Journal.ErrorHandling.JournalException;
 import com.journal.adib.Journal.Models.Language;
@@ -117,7 +119,7 @@ public class LibraryControllerTest {
     }
 
     @Test
-    public void create_Created_ShouldReturnLibraryResource() throws Exception {
+    public void create_Created_ShouldReturnCreatedLibrary() throws Exception {
         Library l1 = new Library();
         l1.setName("Library1");
         l1.setId(new Long(1));
@@ -163,6 +165,86 @@ public class LibraryControllerTest {
 
 
         mockMvc.perform(post("/libraries")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(l1)))
+                .andExpect(status().isBadRequest());
+
+        verifyZeroInteractions(libraryServiceMock);
+    }
+
+    @Test
+    public void update_Updated_ShouldReturnUpdatedLibrary() throws Exception {
+        Library l1 = new Library();
+        l1.setName("Library1");
+        l1.setId(new Long(1));
+
+        when(libraryServiceMock.findById(1L)).thenReturn(l1);
+        when(libraryServiceMock.save(any(Library.class))).thenReturn(l1);
+
+
+        mockMvc.perform(put("/libraries/{libraryId}", 1L)
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(l1)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is("Library1")));
+
+        verify(libraryServiceMock, times(1)).findById(1L);
+        verify(libraryServiceMock, times(1)).save(any(Library.class));
+        verifyNoMoreInteractions(libraryServiceMock);
+    }
+
+    @Test
+    public void update_IdNotFound_ShouldReturnHttpStatusCode404() throws Exception {
+        Library l1 = new Library();
+        l1.setName("Library1");
+        l1.setId(new Long(1));
+
+        when(libraryServiceMock.findById(1L)).thenThrow(new JournalException("No library found", HttpStatus.NOT_FOUND));
+
+
+        MvcResult result = mockMvc.perform(put("/libraries/{libraryId}", 1L)
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(l1)))
+                .andExpect(status().isNotFound())
+                .andReturn();
+        assertEquals("No library found", result.getResponse().getContentAsString());
+
+        verify(libraryServiceMock, times(1)).findById(1L);
+        verifyNoMoreInteractions(libraryServiceMock);
+    }
+
+    @Test
+    public void update_NotUpdated_ShouldReturnHttpStatusCode500() throws Exception {
+        Library l1 = new Library();
+        l1.setName("Library1");
+        l1.setId(new Long(1));
+
+
+        when(libraryServiceMock.findById(1L)).thenReturn(l1);
+        when(libraryServiceMock.save(any(Library.class))).thenThrow(new JournalException("Failed to update new library", HttpStatus.INTERNAL_SERVER_ERROR));
+
+
+        MvcResult result = mockMvc.perform(put("/libraries/{libraryId}", 1L)
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(l1)))
+                .andExpect(status().isInternalServerError())
+                .andReturn();
+        assertEquals("Failed to update new library", result.getResponse().getContentAsString());
+
+        verify(libraryServiceMock, times(1)).findById(1L);
+        verify(libraryServiceMock, times(1)).save(any(Library.class));
+        verifyNoMoreInteractions(libraryServiceMock);
+    }
+
+    @Test
+    public void update_ValidationFailed_ShouldReturnHttpStatusCode400() throws Exception {
+        Library l1 = new Library();
+        l1.setId(new Long(1));
+        l1.setName(TestUtil.createStringWithLength(31));
+
+
+        mockMvc.perform(put("/libraries/{libraryId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(l1)))
                 .andExpect(status().isBadRequest());

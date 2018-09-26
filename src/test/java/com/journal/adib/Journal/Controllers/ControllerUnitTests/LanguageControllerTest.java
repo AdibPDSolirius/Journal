@@ -1,5 +1,7 @@
-package com.journal.adib.Journal.Controllers;
+package com.journal.adib.Journal.Controllers.ControllerUnitTests;
 
+import com.journal.adib.Journal.Controllers.LanguageController;
+import com.journal.adib.Journal.Controllers.TestUtil;
 import com.journal.adib.Journal.ErrorHandling.ErrorHandler;
 import com.journal.adib.Journal.ErrorHandling.JournalException;
 import com.journal.adib.Journal.Models.Language;
@@ -115,7 +117,7 @@ public class LanguageControllerTest {
     }
 
     @Test
-    public void create_Created_ShouldReturnLanguageResource() throws Exception {
+    public void create_Created_ShouldReturnCreatedLanguage() throws Exception {
         Language l1 = new Language();
         l1.setId(new Long(1));
         l1.setName("Language1");
@@ -161,6 +163,86 @@ public class LanguageControllerTest {
 
 
         mockMvc.perform(post("/languages")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(l1)))
+                .andExpect(status().isBadRequest());
+
+        verifyZeroInteractions(languageServiceMock);
+    }
+
+    @Test
+    public void update_Updated_ShouldReturnUpdatedLanguage() throws Exception {
+        Language l1 = new Language();
+        l1.setName("Language1");
+        l1.setId(new Long(1));
+
+        when(languageServiceMock.findById(1L)).thenReturn(l1);
+        when(languageServiceMock.save(any(Language.class))).thenReturn(l1);
+
+
+        mockMvc.perform(put("/languages/{languageId}", 1L)
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(l1)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is("Language1")));
+
+        verify(languageServiceMock, times(1)).findById(1L);
+        verify(languageServiceMock, times(1)).save(any(Language.class));
+        verifyNoMoreInteractions(languageServiceMock);
+    }
+
+    @Test
+    public void update_IdNotFound_ShouldReturnHttpStatusCode404() throws Exception {
+        Language l1 = new Language();
+        l1.setName("Language1");
+        l1.setId(new Long(1));
+
+        when(languageServiceMock.findById(1L)).thenThrow(new JournalException("No language found", HttpStatus.NOT_FOUND));
+
+
+        MvcResult result = mockMvc.perform(put("/languages/{languageId}", 1L)
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(l1)))
+                .andExpect(status().isNotFound())
+                .andReturn();
+        assertEquals("No language found", result.getResponse().getContentAsString());
+
+        verify(languageServiceMock, times(1)).findById(1L);
+        verifyNoMoreInteractions(languageServiceMock);
+    }
+
+    @Test
+    public void update_NotUpdated_ShouldReturnHttpStatusCode500() throws Exception {
+        Language l1 = new Language();
+        l1.setName("Language1");
+        l1.setId(new Long(1));
+
+
+        when(languageServiceMock.findById(1L)).thenReturn(l1);
+        when(languageServiceMock.save(any(Language.class))).thenThrow(new JournalException("Failed to update new language", HttpStatus.INTERNAL_SERVER_ERROR));
+
+
+        MvcResult result = mockMvc.perform(put("/languages/{languageId}", 1L)
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(l1)))
+                .andExpect(status().isInternalServerError())
+                .andReturn();
+        assertEquals("Failed to update new language", result.getResponse().getContentAsString());
+
+        verify(languageServiceMock, times(1)).findById(1L);
+        verify(languageServiceMock, times(1)).save(any(Language.class));
+        verifyNoMoreInteractions(languageServiceMock);
+    }
+
+    @Test
+    public void update_ValidationFailed_ShouldReturnHttpStatusCode400() throws Exception {
+        Language l1 = new Language();
+        l1.setId(new Long(1));
+        l1.setName(TestUtil.createStringWithLength(31));
+
+
+        mockMvc.perform(put("/languages/{languageId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(l1)))
                 .andExpect(status().isBadRequest());

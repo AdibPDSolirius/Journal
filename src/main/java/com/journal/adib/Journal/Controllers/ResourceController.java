@@ -61,6 +61,13 @@ public class ResourceController {
         return ResponseEntity.status(HttpStatus.CREATED).body(resourceService.save(resource));
     }
 
+    @PutMapping("/resources/{resourceId}")
+    public ResponseEntity<Resource> update(@PathVariable(value="resourceId") Long resourceId, @Valid  @RequestBody Resource inputResource) throws JournalException{
+        resourceService.findById(resourceId);
+        Resource savedResource = resourceService.save(inputResource);
+        return ResponseEntity.status(HttpStatus.OK).body(savedResource);
+    }
+
     @DeleteMapping("/resources/{resourceId}")
     public ResponseEntity<Resource> deleteResource(@PathVariable Long resourceId) {
         resourceService.deleteById(resourceId);

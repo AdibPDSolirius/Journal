@@ -1,5 +1,7 @@
-package com.journal.adib.Journal.Controllers;
+package com.journal.adib.Journal.Controllers.ControllerUnitTests;
 
+import com.journal.adib.Journal.Controllers.FrameworkController;
+import com.journal.adib.Journal.Controllers.TestUtil;
 import com.journal.adib.Journal.ErrorHandling.ErrorHandler;
 import com.journal.adib.Journal.ErrorHandling.JournalException;
 import com.journal.adib.Journal.Models.Framework;
@@ -118,7 +120,7 @@ public class FrameworkControllerTest {
     }
 
     @Test
-    public void create_Created_ShouldReturnFrameworkResource() throws Exception {
+    public void create_Created_ShouldReturnCreatedFramework() throws Exception {
         Framework f1 = new Framework();
         f1.setName("Framework1");
         f1.setId(new Long(1));
@@ -165,6 +167,86 @@ public class FrameworkControllerTest {
 
 
         mockMvc.perform(post("/frameworks")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(f1)))
+                .andExpect(status().isBadRequest());
+
+        verifyZeroInteractions(frameworkServiceMock);
+    }
+
+    @Test
+    public void update_Updated_ShouldReturnUpdatedFramework() throws Exception {
+        Framework f1 = new Framework();
+        f1.setName("Framework1");
+        f1.setId(new Long(1));
+
+        when(frameworkServiceMock.findById(1L)).thenReturn(f1);
+        when(frameworkServiceMock.save(any(Framework.class))).thenReturn(f1);
+
+
+        mockMvc.perform(put("/frameworks/{frameworkId}", 1L)
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(f1)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is("Framework1")));
+
+        verify(frameworkServiceMock, times(1)).findById(1L);
+        verify(frameworkServiceMock, times(1)).save(any(Framework.class));
+        verifyNoMoreInteractions(frameworkServiceMock);
+    }
+
+    @Test
+    public void update_IdNotFound_ShouldReturnHttpStatusCode404() throws Exception {
+        Framework f1 = new Framework();
+        f1.setName("Framework1");
+        f1.setId(new Long(1));
+
+        when(frameworkServiceMock.findById(1L)).thenThrow(new JournalException("No framework found", HttpStatus.NOT_FOUND));
+
+
+        MvcResult result = mockMvc.perform(put("/frameworks/{frameworkId}", 1L)
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(f1)))
+                .andExpect(status().isNotFound())
+                .andReturn();
+        assertEquals("No framework found", result.getResponse().getContentAsString());
+
+        verify(frameworkServiceMock, times(1)).findById(1L);
+        verifyNoMoreInteractions(frameworkServiceMock);
+    }
+
+    @Test
+    public void update_NotUpdated_ShouldReturnHttpStatusCode500() throws Exception {
+        Framework f1 = new Framework();
+        f1.setName("Framework1");
+        f1.setId(new Long(1));
+
+
+        when(frameworkServiceMock.findById(1L)).thenReturn(f1);
+        when(frameworkServiceMock.save(any(Framework.class))).thenThrow(new JournalException("Failed to update new framework", HttpStatus.INTERNAL_SERVER_ERROR));
+
+
+        MvcResult result = mockMvc.perform(put("/frameworks/{frameworkId}", 1L)
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(f1)))
+                .andExpect(status().isInternalServerError())
+                .andReturn();
+        assertEquals("Failed to update new framework", result.getResponse().getContentAsString());
+
+        verify(frameworkServiceMock, times(1)).findById(1L);
+        verify(frameworkServiceMock, times(1)).save(any(Framework.class));
+        verifyNoMoreInteractions(frameworkServiceMock);
+    }
+
+    @Test
+    public void update_ValidationFailed_ShouldReturnHttpStatusCode400() throws Exception {
+        Framework f1 = new Framework();
+        f1.setName(TestUtil.createStringWithLength(31));
+        f1.setId(new Long(1));
+
+
+        mockMvc.perform(put("/frameworks/{frameworkId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(f1)))
                 .andExpect(status().isBadRequest());

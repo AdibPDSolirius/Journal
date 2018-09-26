@@ -37,6 +37,13 @@ public class LibraryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(libraryService.save(library));
     }
 
+    @PutMapping("/libraries/{libraryId}")
+    public ResponseEntity<Library> update(@PathVariable(value="libraryId") Long libraryId, @Valid @RequestBody Library inputLibrary) throws JournalException{
+        libraryService.findById(libraryId);
+        Library savedLibrary = libraryService.save(inputLibrary);
+        return ResponseEntity.status(HttpStatus.OK).body(savedLibrary);
+    }
+
     @DeleteMapping("/libraries/{libraryId}")
     public void deleteById(@PathVariable(value="libraryId") Long libraryId){
         libraryService.deleteById(libraryId);

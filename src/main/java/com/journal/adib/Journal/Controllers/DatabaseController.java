@@ -41,6 +41,13 @@ public class DatabaseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(databaseService.save(database));
     }
 
+    @PutMapping("/databases/{databaseId}")
+    public ResponseEntity<Database> update(@PathVariable(value="databaseId") Long databaseId, @Valid @RequestBody Database inputDatabase) throws JournalException{
+        databaseService.findById(databaseId);
+        Database savedDatabase = databaseService.save(inputDatabase);
+        return ResponseEntity.status(HttpStatus.OK).body(savedDatabase);
+    }
+
     @DeleteMapping("/databases/{databaseId}")
     public void deleteById(@PathVariable(value="databaseId") Long databaseId){
         databaseService.deleteById(databaseId);

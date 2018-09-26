@@ -1,5 +1,7 @@
-package com.journal.adib.Journal.Controllers;
+package com.journal.adib.Journal.Controllers.ControllerUnitTests;
 
+import com.journal.adib.Journal.Controllers.ResourceController;
+import com.journal.adib.Journal.Controllers.TestUtil;
 import com.journal.adib.Journal.ErrorHandling.ErrorHandler;
 import com.journal.adib.Journal.ErrorHandling.JournalException;
 import com.journal.adib.Journal.Models.*;
@@ -203,6 +205,100 @@ public class ResourceControllerTest {
 
         verify(resourceServiceMock, times(1)).save(any(Resource.class));
         verifyNoMoreInteractions(resourceServiceMock);
+    }
+
+    @Test
+    public void update_Updated_ShouldReturnUpdateResource() throws Exception {
+        Resource r1 = new Resource();
+        r1.setName("Resource1");
+        r1.setUrl("Resource1Url");
+        r1.setId(new Long(1));
+
+        Language l1 = new Language();
+        l1.setId(new Long(3));
+        l1.setName("Language1");
+
+        Set<Language> languageSet = new HashSet<>();
+        languageSet.add(l1);
+
+        r1.setLanguages(languageSet);
+
+        when(resourceServiceMock.findById(1L)).thenReturn(r1);
+        when(resourceServiceMock.save(any(Resource.class))).thenReturn(r1);
+
+
+        mockMvc.perform(put("/resources/{resourceId}", 1L)
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(r1)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is("Resource1")))
+                .andExpect(jsonPath("$.url", is("Resource1Url")))
+                .andExpect(jsonPath("$.languages", hasSize(1)))
+                .andExpect(jsonPath("$.languages[0].id", is(3)))
+                .andExpect(jsonPath("$.languages[0].name", is("Language1")));
+
+        verify(resourceServiceMock, times(1)).save(any(Resource.class));
+        verify(resourceServiceMock, times(1)).findById(1L);
+        verifyNoMoreInteractions(resourceServiceMock);
+    }
+
+    @Test
+    public void update_NotUpdated_ShouldReturnHttpStatusCode500() throws Exception {
+        Resource r1 = new Resource();
+        r1.setName("Hello");
+        r1.setUrl("Resource1Url");
+        r1.setId(new Long(1));
+
+        when(resourceServiceMock.findById(1L)).thenReturn(r1);
+        when(resourceServiceMock.save(any(Resource.class))).thenThrow(new JournalException("Failed to update new resource", HttpStatus.INTERNAL_SERVER_ERROR));
+
+        MvcResult result = mockMvc.perform(put("/resources/{resourceId}", 1L)
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(r1)))
+                .andExpect(status().isInternalServerError())
+                .andReturn();
+        assertEquals("Failed to update new resource", result.getResponse().getContentAsString());
+
+        verify(resourceServiceMock, times(1)).save(any(Resource.class));
+        verify(resourceServiceMock, times(1)).findById(1L);
+        verifyNoMoreInteractions(resourceServiceMock);
+    }
+
+    @Test
+    public void update_IdNotFound_ShouldReturnHttpStatusCode404() throws Exception {
+        Resource r1 = new Resource();
+        r1.setName("Hello");
+        r1.setUrl("Resource1Url");
+        r1.setId(new Long(1));
+
+        when(resourceServiceMock.findById(1L)).thenThrow(new JournalException("Resource not found", HttpStatus.NOT_FOUND));
+
+        MvcResult result = mockMvc.perform(put("/resources/{resourceId}", 1L)
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(r1)))
+                .andExpect(status().isNotFound())
+                .andReturn();
+        assertEquals("Resource not found", result.getResponse().getContentAsString());
+
+        verify(resourceServiceMock, times(1)).findById(1L);
+        verifyNoMoreInteractions(resourceServiceMock);
+    }
+
+    @Test
+    public void update_ValidationFailed_ShouldReturnHttpStatusCode400() throws Exception {
+        Resource r1 = new Resource();
+        r1.setName(TestUtil.createStringWithLength(31));
+        r1.setUrl("Resource1Url");
+        r1.setId(new Long(1));
+
+
+        mockMvc.perform(put("/resources/{resourceId}", 1L)
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(r1)))
+                .andExpect(status().isBadRequest());
+
+        verifyZeroInteractions(resourceServiceMock);
     }
 
     @Test
