@@ -1,4 +1,4 @@
-package com.journal.adib.Journal.Controllers;
+package com.journal.adib.Journal;
 
 import com.journal.adib.Journal.ErrorHandling.JournalException;
 import com.journal.adib.Journal.Models.Framework;
@@ -18,6 +18,7 @@ import java.util.List;
 
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 public class FrameworkController {
 
     @Autowired
@@ -41,9 +42,9 @@ public class FrameworkController {
 
     @PutMapping("/frameworks/{frameworkId}")
     public ResponseEntity<Framework> update(@PathVariable(value="frameworkId") Long frameworkId, @Valid @RequestBody Framework inputFramework) throws JournalException{
-        frameworkService.findById(frameworkId);
-        Framework savedFramework = frameworkService.save(inputFramework);
-        return ResponseEntity.status(HttpStatus.OK).body(savedFramework);
+        Framework framework = frameworkService.findById(frameworkId);
+        framework.setName(inputFramework.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(framework);
     }
 
     @DeleteMapping("/frameworks/{frameworkId}")

@@ -1,4 +1,4 @@
-package com.journal.adib.Journal.Controllers;
+package com.journal.adib.Journal;
 
 import com.journal.adib.Journal.ErrorHandling.JournalException;
 import com.journal.adib.Journal.Models.Resource;
@@ -63,9 +63,15 @@ public class ResourceController {
 
     @PutMapping("/resources/{resourceId}")
     public ResponseEntity<Resource> update(@PathVariable(value="resourceId") Long resourceId, @Valid  @RequestBody Resource inputResource) throws JournalException{
-        resourceService.findById(resourceId);
-        Resource savedResource = resourceService.save(inputResource);
-        return ResponseEntity.status(HttpStatus.OK).body(savedResource);
+        Resource resource = resourceService.findById(resourceId);
+        resource.setName(inputResource.getName());
+        resource.setUrl(inputResource.getUrl());
+        resource.setLanguages(inputResource.getLanguages());
+        resource.setFrameworks(inputResource.getFrameworks());
+        resource.setLibraries(inputResource.getLibraries());
+        resource.setDatabases(inputResource.getDatabases());
+
+        return ResponseEntity.status(HttpStatus.OK).body(resourceService.save(resource));
     }
 
     @DeleteMapping("/resources/{resourceId}")

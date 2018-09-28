@@ -1,4 +1,4 @@
-package com.journal.adib.Journal.Controllers;
+package com.journal.adib.Journal;
 
 import com.journal.adib.Journal.ErrorHandling.JournalException;
 import com.journal.adib.Journal.Models.Database;
@@ -20,6 +20,7 @@ import java.util.List;
 
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 public class DatabaseController {
 
     @Autowired
@@ -43,9 +44,9 @@ public class DatabaseController {
 
     @PutMapping("/databases/{databaseId}")
     public ResponseEntity<Database> update(@PathVariable(value="databaseId") Long databaseId, @Valid @RequestBody Database inputDatabase) throws JournalException{
-        databaseService.findById(databaseId);
-        Database savedDatabase = databaseService.save(inputDatabase);
-        return ResponseEntity.status(HttpStatus.OK).body(savedDatabase);
+        Database database = databaseService.findById(databaseId);
+        database.setName(inputDatabase.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(database);
     }
 
     @DeleteMapping("/databases/{databaseId}")

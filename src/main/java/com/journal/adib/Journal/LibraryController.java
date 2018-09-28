@@ -1,4 +1,4 @@
-package com.journal.adib.Journal.Controllers;
+package com.journal.adib.Journal;
 
 import com.journal.adib.Journal.ErrorHandling.JournalException;
 import com.journal.adib.Journal.Models.Language;
@@ -16,6 +16,7 @@ import java.util.List;
 
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 public class LibraryController {
 
     @Autowired
@@ -39,9 +40,9 @@ public class LibraryController {
 
     @PutMapping("/libraries/{libraryId}")
     public ResponseEntity<Library> update(@PathVariable(value="libraryId") Long libraryId, @Valid @RequestBody Library inputLibrary) throws JournalException{
-        libraryService.findById(libraryId);
-        Library savedLibrary = libraryService.save(inputLibrary);
-        return ResponseEntity.status(HttpStatus.OK).body(savedLibrary);
+        Library library = libraryService.findById(libraryId);
+        library.setName(inputLibrary.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(library);
     }
 
     @DeleteMapping("/libraries/{libraryId}")

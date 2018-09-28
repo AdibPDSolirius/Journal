@@ -1,7 +1,7 @@
-package com.journal.adib.Journal.Controllers.ControllerUnitTests;
+package com.journal.adib.Journal.Controller;
 
-import com.journal.adib.Journal.Controllers.ResourceController;
-import com.journal.adib.Journal.Controllers.TestUtil;
+import com.journal.adib.Journal.TestUtil;
+import com.journal.adib.Journal.ResourceController;
 import com.journal.adib.Journal.ErrorHandling.ErrorHandler;
 import com.journal.adib.Journal.ErrorHandling.JournalException;
 import com.journal.adib.Journal.Models.*;

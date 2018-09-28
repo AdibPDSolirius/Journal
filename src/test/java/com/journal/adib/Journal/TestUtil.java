@@ -1,6 +1,5 @@
-package com.journal.adib.Journal.Controllers;
+package com.journal.adib.Journal;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
 

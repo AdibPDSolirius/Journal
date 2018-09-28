@@ -1,4 +1,4 @@
-package com.journal.adib.Journal.Controllers;
+package com.journal.adib.Journal;
 
 import com.journal.adib.Journal.ErrorHandling.JournalException;
 import com.journal.adib.Journal.Models.Language;
@@ -16,6 +16,7 @@ import java.util.List;
 
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 public class LanguageController {
 
     @Autowired
@@ -39,9 +40,9 @@ public class LanguageController {
 
     @PutMapping("/languages/{languageId}")
     public ResponseEntity<Language> update(@PathVariable(value="languageId") Long languageId, @Valid  @RequestBody Language inputLanguage) throws JournalException{
-        languageService.findById(languageId);
-        Language savedLanguage = languageService.save(inputLanguage);
-        return ResponseEntity.status(HttpStatus.OK).body(savedLanguage);
+        Language language = languageService.findById(languageId);
+        language.setName(inputLanguage.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(language);
     }
 
     @DeleteMapping("/languages/{languageId}")
