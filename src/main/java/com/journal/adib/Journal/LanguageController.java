@@ -42,7 +42,7 @@ public class LanguageController {
     public ResponseEntity<Language> update(@PathVariable(value="languageId") Long languageId, @Valid  @RequestBody Language inputLanguage) throws JournalException{
         Language language = languageService.findById(languageId);
         language.setName(inputLanguage.getName());
-        return ResponseEntity.status(HttpStatus.OK).body(language);
+        return ResponseEntity.status(HttpStatus.OK).body(languageService.save(language));
     }
 
     @DeleteMapping("/languages/{languageId}")

@@ -40,7 +40,7 @@ public class LibraryService {
         if(savedLibrary != null){
             return savedLibrary;
         }else{
-            throw new JournalException("Failed to save savedLibrary", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new JournalException("Failed to save library", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

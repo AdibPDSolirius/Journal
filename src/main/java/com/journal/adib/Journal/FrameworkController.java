@@ -44,7 +44,7 @@ public class FrameworkController {
     public ResponseEntity<Framework> update(@PathVariable(value="frameworkId") Long frameworkId, @Valid @RequestBody Framework inputFramework) throws JournalException{
         Framework framework = frameworkService.findById(frameworkId);
         framework.setName(inputFramework.getName());
-        return ResponseEntity.status(HttpStatus.OK).body(framework);
+        return ResponseEntity.status(HttpStatus.OK).body(frameworkService.save(framework));
     }
 
     @DeleteMapping("/frameworks/{frameworkId}")

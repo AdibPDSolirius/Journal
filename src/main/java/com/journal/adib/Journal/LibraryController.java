@@ -42,7 +42,7 @@ public class LibraryController {
     public ResponseEntity<Library> update(@PathVariable(value="libraryId") Long libraryId, @Valid @RequestBody Library inputLibrary) throws JournalException{
         Library library = libraryService.findById(libraryId);
         library.setName(inputLibrary.getName());
-        return ResponseEntity.status(HttpStatus.OK).body(library);
+        return ResponseEntity.status(HttpStatus.OK).body(libraryService.save(library));
     }
 
     @DeleteMapping("/libraries/{libraryId}")

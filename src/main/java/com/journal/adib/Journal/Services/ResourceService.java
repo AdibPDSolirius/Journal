@@ -37,11 +37,11 @@ public class ResourceService {
 
     public List<Resource> findAll() throws JournalException{
         List<Resource> resourceList = resourceRepository.findAll();
-            if(resourceList.size() != 0){
-                return resourceList;
-            }else{
-                throw new JournalException("No resources found", HttpStatus.NO_CONTENT);
-            }
+        if(resourceList.size() != 0){
+            return resourceList;
+        }else{
+            throw new JournalException("No resources found", HttpStatus.NO_CONTENT);
+        }
     }
 
     public Resource findById(Long id) throws JournalException {

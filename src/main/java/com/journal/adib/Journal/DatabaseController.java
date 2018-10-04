@@ -46,7 +46,7 @@ public class DatabaseController {
     public ResponseEntity<Database> update(@PathVariable(value="databaseId") Long databaseId, @Valid @RequestBody Database inputDatabase) throws JournalException{
         Database database = databaseService.findById(databaseId);
         database.setName(inputDatabase.getName());
-        return ResponseEntity.status(HttpStatus.OK).body(database);
+        return ResponseEntity.status(HttpStatus.OK).body(databaseService.save(database));
     }
 
     @DeleteMapping("/databases/{databaseId}")
