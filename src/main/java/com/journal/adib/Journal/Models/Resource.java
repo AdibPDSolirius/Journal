@@ -37,6 +37,14 @@ public class Resource {
         this.url = url;
     }
 
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
+    }
+
     public Set<Language> getLanguages() {
         return languages;
     }
@@ -81,6 +89,10 @@ public class Resource {
 
     @Column(name="resource_url")
     private String url;
+
+
+    @Column(name="resource_memo")
+    private String memo;
 
 
     @ManyToMany()
