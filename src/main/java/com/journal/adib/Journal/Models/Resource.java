@@ -37,6 +37,14 @@ public class Resource {
         this.url = url;
     }
 
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
+
     public String getMemo() {
         return memo;
     }
@@ -93,6 +101,9 @@ public class Resource {
 
     @Column(name="resource_memo")
     private String memo;
+
+    @Column(name="resource_file")
+    private String file;
 
 
     @ManyToMany()

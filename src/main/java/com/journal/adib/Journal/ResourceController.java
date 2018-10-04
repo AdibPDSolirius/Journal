@@ -67,6 +67,7 @@ public class ResourceController {
         resource.setName(inputResource.getName());
         resource.setUrl(inputResource.getUrl());
         resource.setMemo(inputResource.getMemo());
+        resource.setFile(resource.getFile());
         resource.setLanguages(inputResource.getLanguages());
         resource.setFrameworks(inputResource.getFrameworks());
         resource.setLibraries(inputResource.getLibraries());

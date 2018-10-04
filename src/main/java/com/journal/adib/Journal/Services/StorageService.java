@@ -18,12 +18,15 @@ public class StorageService {
 
     String absoluteStoragePath = "/home/adib/Documents/JournalImageUploads";
 
-    public void store(MultipartFile file){
+    public String store(MultipartFile file){
+        String newFileName = "";
         try{
-            file.transferTo(new File(absoluteStoragePath + "/" + file.getOriginalFilename() + UUID.randomUUID()));
+            newFileName = file.getOriginalFilename() + UUID.randomUUID();
+            file.transferTo(new File(absoluteStoragePath + "/" + newFileName));
         }catch(IOException ioe){
 
         }
+        return newFileName;
     }
 
     public byte[] getFile(String filename) {
