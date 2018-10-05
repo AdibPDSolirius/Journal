@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 @Service
 public class StorageService {
 
-    String absoluteStoragePath = "/home/adib/Documents/JournalImageUploads";
+    String absoluteStoragePath = "/home/adib/Documents/JournalApplication/JournalImageUploads";
 
     public String store(MultipartFile file){
         String newFileName = "";

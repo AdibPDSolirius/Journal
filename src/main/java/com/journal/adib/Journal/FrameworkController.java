@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-
+@RequestMapping("/api")
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://mysterious-woodland-86802.herokuapp.com")
 public class FrameworkController {
 
     @Autowired
