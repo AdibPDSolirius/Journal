@@ -33,7 +33,8 @@ public class StorageService {
         InputStream in = null;
         try {
             in = new FileInputStream(new File(absoluteStoragePath + "/" + filename));
-            return IOUtils.toByteArray(in);
+            byte[] b = IOUtils.toByteArray(in);
+            return b;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
