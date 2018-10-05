@@ -26,9 +26,15 @@ public class FileUploadController {
         }
     }
 
-    @GetMapping(value = "file/{fileName}")
+    @GetMapping("file/{fileName}")
     public ResponseEntity<byte[]> handleFileRetrieval(@PathVariable(value="fileName") String fileName){
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(storageService.getFile(fileName));
+    }
+
+    @DeleteMapping("file/{fileName}")
+    public ResponseEntity handleFileDeletion(@PathVariable(value="fileName") String fileName){
+        storageService.deleteFile(fileName);
+        return ResponseEntity.ok().build();
     }
 
 }

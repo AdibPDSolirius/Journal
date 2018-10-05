@@ -43,4 +43,9 @@ public class StorageService {
         return null;
     }
 
+    public boolean deleteFile(String filename){
+        File file = new File(absoluteStoragePath + "/" + filename);
+        return file.delete();
+    }
+
 }
