@@ -18,7 +18,11 @@ import java.util.stream.Stream;
 @Service
 public class StorageService {
 
-    String absoluteStoragePath = "/home/adib/Documents/JournalApplication/Journal/src/main/resources/images/";
+    String absoluteStoragePath = "";
+
+    public StorageService(){
+        absoluteStoragePath = System.getProperty("user.dir") + "/src/main/resources/images/";
+    }
 
     public String store(MultipartFile file) throws JournalException{
         String newFileName = "";
@@ -27,6 +31,7 @@ public class StorageService {
             newFileName = file.getOriginalFilename() + UUID.randomUUID();
             file.transferTo(new File(absoluteStoragePath + newFileName));
         }catch(IOException ioe){
+            ioe.printStackTrace();
             throw new JournalException("Could not save file", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return newFileName;

@@ -19,12 +19,7 @@ public class FileUploadController {
 
     @PostMapping("/file/upload")
     public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) throws JournalException{
-        try {
-            String newFileName = storageService.store(file);
-            return ResponseEntity.status(HttpStatus.OK).body(newFileName);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body("FAIL to upload " + file.getOriginalFilename() + "!");
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(storageService.store(file));
     }
 
     @GetMapping("file/{fileName}")
