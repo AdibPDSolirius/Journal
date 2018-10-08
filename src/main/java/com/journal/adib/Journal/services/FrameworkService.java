@@ -1,11 +1,8 @@
 package com.journal.adib.Journal.Services;
 
-import com.journal.adib.Journal.ErrorHandling.JournalException;
-import com.journal.adib.Journal.Models.Framework;
-import com.journal.adib.Journal.Models.Language;
-import com.journal.adib.Journal.Models.Resource;
+import com.journal.adib.Journal.errorHandling.JournalException;
+import com.journal.adib.Journal.models.Framework;
 import com.journal.adib.Journal.Repositories.FrameworkRepository;
-import com.journal.adib.Journal.Repositories.ResourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

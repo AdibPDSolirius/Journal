@@ -1,4 +1,4 @@
-package com.journal.adib.Journal;
+package com.journal.adib.Journal.Controllers;
 
 import com.journal.adib.Journal.ErrorHandling.JournalException;
 import com.journal.adib.Journal.Models.Language;

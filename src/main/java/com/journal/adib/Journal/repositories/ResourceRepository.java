@@ -1,6 +1,6 @@
 package com.journal.adib.Journal.Repositories;
 
-import com.journal.adib.Journal.Models.Resource;
+import com.journal.adib.Journal.models.Resource;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

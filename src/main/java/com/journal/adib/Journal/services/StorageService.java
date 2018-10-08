@@ -1,18 +1,13 @@
 package com.journal.adib.Journal.Services;
 
-import com.journal.adib.Journal.ErrorHandling.JournalException;
+import com.journal.adib.Journal.errorHandling.JournalException;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 
 @Service
