@@ -18,7 +18,7 @@ public class FileUploadController {
     StorageService storageService;
 
     @PostMapping("/file/upload")
-    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file){
+    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) throws JournalException{
         try {
             String newFileName = storageService.store(file);
             return ResponseEntity.status(HttpStatus.OK).body(newFileName);
@@ -28,12 +28,12 @@ public class FileUploadController {
     }
 
     @GetMapping("file/{fileName}")
-    public ResponseEntity<byte[]> handleFileRetrieval(@PathVariable(value="fileName") String fileName){
+    public ResponseEntity<byte[]> handleFileRetrieval(@PathVariable(value="fileName") String fileName) throws JournalException{
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(storageService.getFile(fileName));
     }
 
     @DeleteMapping("file/{fileName}")
-    public ResponseEntity handleFileDeletion(@PathVariable(value="fileName") String fileName){
+    public ResponseEntity handleFileDeletion(@PathVariable(value="fileName") String fileName) throws JournalException{
         storageService.deleteFile(fileName);
         return ResponseEntity.ok().build();
     }
