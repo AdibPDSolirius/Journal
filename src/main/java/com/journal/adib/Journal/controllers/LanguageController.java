@@ -12,38 +12,37 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@RequestMapping("/api")
+@RequestMapping("/api/languages")
 @RestController
-@CrossOrigin(origins = {"https://mysterious-woodland-86802.herokuapp.com", "http://localhost:4200"})
 public class LanguageController {
 
     @Autowired
     LanguageService languageService;
 
-    @GetMapping("/languages")
+    @GetMapping("")
     public ResponseEntity<List<Language>>  findAll() throws JournalException {
         return ResponseEntity.status(HttpStatus.OK).body(languageService.findAll());
 
     }
 
-    @GetMapping("/languages/{languageId}")
+    @GetMapping("/{languageId}")
     public ResponseEntity<Language> findById(@PathVariable(value="languageId") Long languageId) throws JournalException {
         return ResponseEntity.status(HttpStatus.OK).body(languageService.findById(languageId));
     }
 
-    @PostMapping("/languages")
+    @PostMapping("")
     public ResponseEntity<Language> create(@Valid @RequestBody Language language) throws JournalException{
         return ResponseEntity.status(HttpStatus.CREATED).body(languageService.save(language));
     }
 
-    @PutMapping("/languages/{languageId}")
+    @PutMapping("/{languageId}")
     public ResponseEntity<Language> update(@PathVariable(value="languageId") Long languageId, @Valid  @RequestBody Language inputLanguage) throws JournalException{
         Language language = languageService.findById(languageId);
         language.setName(inputLanguage.getName());
         return ResponseEntity.status(HttpStatus.OK).body(languageService.save(language));
     }
 
-    @DeleteMapping("/languages/{languageId}")
+    @DeleteMapping("/{languageId}")
     public void deleteById(@PathVariable(value="languageId") Long languageId){
         languageService.deleteById(languageId);
     }

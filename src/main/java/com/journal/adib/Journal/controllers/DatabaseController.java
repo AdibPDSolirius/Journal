@@ -12,38 +12,37 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@RequestMapping("/api")
+@RequestMapping("/api/databases")
 @RestController
-@CrossOrigin(origins = {"https://mysterious-woodland-86802.herokuapp.com", "http://localhost:4200"})
 public class DatabaseController {
 
     @Autowired
     DatabaseService databaseService;
 
-    @GetMapping("/databases")
+    @GetMapping("")
     public ResponseEntity<List<Database>> findAll() throws JournalException {
         return ResponseEntity.status(HttpStatus.OK).body(databaseService.findAll());
 
     }
 
-    @GetMapping("/databases/{databaseId}")
+    @GetMapping("/{databaseId}")
     public ResponseEntity<Database> findById(@PathVariable(value="databaseId") Long databaseId) throws JournalException {
         return ResponseEntity.status(HttpStatus.OK).body(databaseService.findById(databaseId));
     }
 
-    @PostMapping("/databases")
+    @PostMapping("")
     public ResponseEntity<Database> create(@Valid @RequestBody Database database) throws JournalException{
         return ResponseEntity.status(HttpStatus.CREATED).body(databaseService.save(database));
     }
 
-    @PutMapping("/databases/{databaseId}")
+    @PutMapping("/{databaseId}")
     public ResponseEntity<Database> update(@PathVariable(value="databaseId") Long databaseId, @Valid @RequestBody Database inputDatabase) throws JournalException{
         Database database = databaseService.findById(databaseId);
         database.setName(inputDatabase.getName());
         return ResponseEntity.status(HttpStatus.OK).body(databaseService.save(database));
     }
 
-    @DeleteMapping("/databases/{databaseId}")
+    @DeleteMapping("/{databaseId}")
     public void deleteById(@PathVariable(value="databaseId") Long databaseId){
         databaseService.deleteById(databaseId);
     }

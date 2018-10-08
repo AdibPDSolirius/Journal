@@ -12,38 +12,37 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@RequestMapping("/api")
+@RequestMapping("/api/frameworks")
 @RestController
-@CrossOrigin(origins = {"https://mysterious-woodland-86802.herokuapp.com", "http://localhost:4200"})
 public class FrameworkController {
 
     @Autowired
     FrameworkService frameworkService;
 
-    @GetMapping("/frameworks")
+    @GetMapping("")
     public ResponseEntity<List<Framework>> findAll() throws JournalException {
         return ResponseEntity.status(HttpStatus.OK).body(frameworkService.findAll());
 
     }
 
-    @GetMapping("/frameworks/{frameworkId}")
+    @GetMapping("/{frameworkId}")
     public ResponseEntity<Framework> findById(@PathVariable(value="frameworkId") Long frameworkId) throws JournalException {
         return ResponseEntity.status(HttpStatus.OK).body(frameworkService.findById(frameworkId));
     }
 
-    @PostMapping("/frameworks")
+    @PostMapping("")
     public ResponseEntity<Framework> create(@Valid @RequestBody Framework framework) throws JournalException{
         return ResponseEntity.status(HttpStatus.CREATED).body(frameworkService.save(framework));
     }
 
-    @PutMapping("/frameworks/{frameworkId}")
+    @PutMapping("/{frameworkId}")
     public ResponseEntity<Framework> update(@PathVariable(value="frameworkId") Long frameworkId, @Valid @RequestBody Framework inputFramework) throws JournalException{
         Framework framework = frameworkService.findById(frameworkId);
         framework.setName(inputFramework.getName());
         return ResponseEntity.status(HttpStatus.OK).body(frameworkService.save(framework));
     }
 
-    @DeleteMapping("/frameworks/{frameworkId}")
+    @DeleteMapping("/{frameworkId}")
     public void deleteById(@PathVariable(value="frameworkId") Long frameworkId){
         frameworkService.deleteById(frameworkId);
     }
