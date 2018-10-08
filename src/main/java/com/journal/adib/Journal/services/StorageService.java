@@ -23,7 +23,7 @@ public class StorageService {
         String newFileName = "";
 
         try{
-            newFileName = file.getOriginalFilename() + UUID.randomUUID();
+            newFileName = UUID.randomUUID() + file.getOriginalFilename();
             file.transferTo(new File(absoluteStoragePath + newFileName));
         }catch(IOException ioe){
             ioe.printStackTrace();
