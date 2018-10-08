@@ -1,11 +1,11 @@
 package com.journal.adib.Journal.Controller;
 
 import com.journal.adib.Journal.TestUtil;
-import com.journal.adib.Journal.ResourceController;
-import com.journal.adib.Journal.ErrorHandling.ErrorHandler;
-import com.journal.adib.Journal.ErrorHandling.JournalException;
-import com.journal.adib.Journal.Models.*;
-import com.journal.adib.Journal.Services.ResourceService;
+import com.journal.adib.Journal.controllers.ResourceController;
+import com.journal.adib.Journal.errorHandling.ErrorHandler;
+import com.journal.adib.Journal.errorHandling.JournalException;
+import com.journal.adib.Journal.models.*;
+import com.journal.adib.Journal.services.ResourceService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

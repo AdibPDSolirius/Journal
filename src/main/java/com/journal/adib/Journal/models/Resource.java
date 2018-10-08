@@ -1,11 +1,8 @@
-package com.journal.adib.Journal.Models;
+package com.journal.adib.Journal.models;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.crypto.Data;
-import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 

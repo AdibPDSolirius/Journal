@@ -1,6 +1,6 @@
 package Cucumber;
 
-import com.journal.adib.Journal.Models.Resource;
+import com.journal.adib.Journal.models.Resource;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;

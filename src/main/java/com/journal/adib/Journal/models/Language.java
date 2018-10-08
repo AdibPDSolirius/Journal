@@ -1,11 +1,9 @@
-package com.journal.adib.Journal.Models;
+package com.journal.adib.Journal.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.journal.adib.Journal.Models.Resource;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;

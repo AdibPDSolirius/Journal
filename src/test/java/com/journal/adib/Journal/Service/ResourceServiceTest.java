@@ -1,9 +1,9 @@
 package com.journal.adib.Journal.Service;
 
-import com.journal.adib.Journal.ErrorHandling.JournalException;
-import com.journal.adib.Journal.Models.*;
-import com.journal.adib.Journal.Repositories.ResourceRepository;
-import com.journal.adib.Journal.Services.*;
+import com.journal.adib.Journal.errorHandling.JournalException;
+import com.journal.adib.Journal.models.*;
+import com.journal.adib.Journal.repositories.ResourceRepository;
+import com.journal.adib.Journal.services.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

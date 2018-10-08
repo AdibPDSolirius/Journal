@@ -1,4 +1,4 @@
-package com.journal.adib.Journal.ErrorHandling;
+package com.journal.adib.Journal.errorHandling;
 
 import org.springframework.http.HttpStatus;
 

@@ -1,24 +1,19 @@
-package com.journal.adib.Journal.Controllers;
+package com.journal.adib.Journal.controllers;
 
-import com.journal.adib.Journal.ErrorHandling.JournalException;
-import com.journal.adib.Journal.Models.Resource;
-import com.journal.adib.Journal.Services.ResourceService;
+import com.journal.adib.Journal.errorHandling.JournalException;
+import com.journal.adib.Journal.models.Resource;
+import com.journal.adib.Journal.services.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
 
 
-@RequestMapping("/api")
 @RestController
-@CrossOrigin(origins = {"https://mysterious-woodland-86802.herokuapp.com", "http://localhost:4200"})
 public class ResourceController {
 
     @Autowired

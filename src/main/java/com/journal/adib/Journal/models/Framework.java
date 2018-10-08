@@ -1,4 +1,4 @@
-package com.journal.adib.Journal.Models;
+package com.journal.adib.Journal.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

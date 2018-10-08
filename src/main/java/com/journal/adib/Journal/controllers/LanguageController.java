@@ -1,13 +1,11 @@
-package com.journal.adib.Journal.Controllers;
+package com.journal.adib.Journal.controllers;
 
-import com.journal.adib.Journal.ErrorHandling.JournalException;
-import com.journal.adib.Journal.Models.Language;
-import com.journal.adib.Journal.Services.LanguageService;
+import com.journal.adib.Journal.errorHandling.JournalException;
+import com.journal.adib.Journal.models.Language;
+import com.journal.adib.Journal.services.LanguageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 

@@ -1,7 +1,7 @@
-package com.journal.adib.Journal.Controllers;
+package com.journal.adib.Journal.controllers;
 
-import com.journal.adib.Journal.ErrorHandling.JournalException;
-import com.journal.adib.Journal.Services.StorageService;
+import com.journal.adib.Journal.errorHandling.JournalException;
+import com.journal.adib.Journal.services.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

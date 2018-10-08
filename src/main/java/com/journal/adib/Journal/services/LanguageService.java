@@ -1,7 +1,7 @@
-package com.journal.adib.Journal.Services;
+package com.journal.adib.Journal.services;
 
 import com.journal.adib.Journal.errorHandling.JournalException;
-import com.journal.adib.Journal.Repositories.LanguageRepository;
+import com.journal.adib.Journal.repositories.LanguageRepository;
 import com.journal.adib.Journal.models.Language;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

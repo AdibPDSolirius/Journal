@@ -1,4 +1,4 @@
-package com.journal.adib.Journal.Services;
+package com.journal.adib.Journal.services;
 
 import com.journal.adib.Journal.errorHandling.JournalException;
 import org.apache.commons.io.IOUtils;

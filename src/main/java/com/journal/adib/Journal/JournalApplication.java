@@ -1,4 +1,4 @@
-package com.journal.adib.Journal.controllers;
+package com.journal.adib.Journal;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
