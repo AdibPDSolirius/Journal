@@ -18,7 +18,7 @@ import java.util.Set;
 
 @RequestMapping("/api")
 @RestController
-@CrossOrigin(origins = "https://mysterious-woodland-86802.herokuapp.com")
+@CrossOrigin(origins = {"https://mysterious-woodland-86802.herokuapp.com", "http://localhost:4200"})
 public class ResourceController {
 
     @Autowired

@@ -20,7 +20,7 @@ import java.util.List;
 
 @RequestMapping("/api")
 @RestController
-@CrossOrigin(origins = "https://mysterious-woodland-86802.herokuapp.com")
+@CrossOrigin(origins = {"https://mysterious-woodland-86802.herokuapp.com", "http://localhost:4200"})
 public class DatabaseController {
 
     @Autowired
