@@ -14,7 +14,7 @@ public class MyConfiguration {
         return new WebMvcConfigurerAdapter() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("https://mysterious-woodland-86802.herokuapp.com").allowedMethods("GET", "POST", "PUT", "DELETE");
+                registry.addMapping("/**").allowedOrigins("https://mysterious-woodland-86802.herokuapp.com", "http://localhost:4200").allowedMethods("GET", "POST", "PUT", "DELETE");
             }
         };
     }

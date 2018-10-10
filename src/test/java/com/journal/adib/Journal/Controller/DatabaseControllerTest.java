@@ -49,7 +49,7 @@ public class DatabaseControllerTest {
     public void findById_NotFound_ShouldReturnHttpStatusCode404() throws Exception {
         when(databaseServiceMock.findById(1L)).thenThrow(new JournalException("Database not found", HttpStatus.NOT_FOUND));
 
-        MvcResult result = mockMvc.perform(get("/databases/{databaseId}", 1L))
+        MvcResult result = mockMvc.perform(get("api/databases/{databaseId}", 1L))
                 .andExpect(status().isNotFound())
                 .andReturn();
         assertEquals("Database not found", result.getResponse().getContentAsString());

@@ -1,6 +1,7 @@
 package com.journal.adib.Journal.services;
 
 import com.journal.adib.Journal.errorHandling.JournalException;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class StorageService {
     }
 
     public String store(MultipartFile file) throws JournalException{
+        checkFileExtension(file.getOriginalFilename());
         String newFileName = "";
 
         try{
@@ -33,19 +35,27 @@ public class StorageService {
     }
 
     public byte[] getFile(String filename) throws JournalException{
+        checkFileExtension(filename);
         InputStream in = null;
         try {
             in = new FileInputStream(new File(absoluteStoragePath + filename));
             byte[] b = IOUtils.toByteArray(in);
             return b;
         } catch (Exception e) {
-            throw new JournalException("Could not find file", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new JournalException("Could not find file", HttpStatus.NOT_FOUND);
         }
     }
 
     public boolean deleteFile(String filename) {
         File file = new File(absoluteStoragePath + filename);
         return file.delete();
+    }
+
+    public void checkFileExtension(String filename) throws JournalException{
+        String extension = FilenameUtils.getExtension(filename);
+        if(!(extension.equals("jpeg") || extension.equals("png"))){
+            throw new JournalException("Not correct file type", HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+        }
     }
 
 }
