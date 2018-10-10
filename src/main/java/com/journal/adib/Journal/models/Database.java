@@ -23,7 +23,7 @@ public class Database extends Technology {
     private String name;
 
 
-    @ManyToMany(mappedBy = "databases")
+    @ManyToMany()
     @JoinTable(name = "resource_database",
             joinColumns = @JoinColumn(name = "database_id"),
             inverseJoinColumns = @JoinColumn(name = "resource_id")

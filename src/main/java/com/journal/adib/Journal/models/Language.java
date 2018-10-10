@@ -38,7 +38,7 @@ public class Language extends Technology{
         this.resources = resources;
     }
 
-    @ManyToMany(mappedBy = "languages")
+    @ManyToMany()
     @JoinTable(name = "resource_language",
             joinColumns = @JoinColumn(name = "language_id"),
             inverseJoinColumns = @JoinColumn(name = "resource_id")

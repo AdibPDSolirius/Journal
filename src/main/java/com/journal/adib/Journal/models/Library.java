@@ -23,7 +23,7 @@ public class Library extends Technology{
     private String name;
 
 
-    @ManyToMany(mappedBy = "libraries")
+    @ManyToMany()
     @JoinTable(name = "resource_library",
             joinColumns = @JoinColumn(name = "library_id"),
             inverseJoinColumns = @JoinColumn(name = "resource_id")

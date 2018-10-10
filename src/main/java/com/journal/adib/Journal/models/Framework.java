@@ -24,7 +24,7 @@ public class Framework extends Technology{
     private String name;
 
 
-    @ManyToMany(mappedBy = "frameworks")
+    @ManyToMany()
     @JoinTable(name = "resource_framework",
             joinColumns = @JoinColumn(name = "framework_id"),
             inverseJoinColumns = @JoinColumn(name = "resource_id")
