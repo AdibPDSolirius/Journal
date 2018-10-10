@@ -22,9 +22,15 @@ public class Database extends Technology {
     @Column(name="database_name")
     private String name;
 
+
     @ManyToMany(mappedBy = "databases")
+    @JoinTable(name = "resource_database",
+            joinColumns = @JoinColumn(name = "database_id"),
+            inverseJoinColumns = @JoinColumn(name = "resource_id")
+    )
     @JsonIgnore
     private Set<Resource> resources = new HashSet<>();
+
 
     public Set<Resource> getResources() {
         return resources;

@@ -25,6 +25,10 @@ public class Framework extends Technology{
 
 
     @ManyToMany(mappedBy = "frameworks")
+    @JoinTable(name = "resource_framework",
+            joinColumns = @JoinColumn(name = "framework_id"),
+            inverseJoinColumns = @JoinColumn(name = "resource_id")
+    )
     @JsonIgnore
     private Set<Resource> resources = new HashSet<>();
 

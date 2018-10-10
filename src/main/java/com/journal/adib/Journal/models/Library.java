@@ -24,6 +24,10 @@ public class Library extends Technology{
 
 
     @ManyToMany(mappedBy = "libraries")
+    @JoinTable(name = "resource_library",
+            joinColumns = @JoinColumn(name = "library_id"),
+            inverseJoinColumns = @JoinColumn(name = "resource_id")
+    )
     @JsonIgnore
     private Set<Resource> resources = new HashSet<>();
 

@@ -39,6 +39,10 @@ public class Language extends Technology{
     }
 
     @ManyToMany(mappedBy = "languages")
+    @JoinTable(name = "resource_language",
+            joinColumns = @JoinColumn(name = "language_id"),
+            inverseJoinColumns = @JoinColumn(name = "resource_id")
+    )
     @JsonIgnore
     private Set<Resource> resources = new HashSet<>();
 
