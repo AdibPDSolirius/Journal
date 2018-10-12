@@ -29,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class FrameworkControllerTest {
+    private String baseURL = "/api/frameworks/";
 
     private MockMvc mockMvc;
 
@@ -49,7 +50,7 @@ public class FrameworkControllerTest {
     public void findById_NotFound_ShouldReturnHttpStatusCode404() throws Exception {
         when(frameworkServiceMock.findById(1L)).thenThrow(new JournalException("Framework not found", HttpStatus.NOT_FOUND));
 
-        MvcResult result = mockMvc.perform(get("/frameworks/{frameworkId}", 1L))
+        MvcResult result = mockMvc.perform(get(baseURL + "{frameworkId}", 1L))
                 .andExpect(status().isNotFound())
                 .andReturn();
         assertEquals("Framework not found", result.getResponse().getContentAsString());
@@ -67,7 +68,7 @@ public class FrameworkControllerTest {
 
         when(frameworkServiceMock.findById(1L)).thenReturn(f1);
 
-        mockMvc.perform(get("/frameworks/{frameworkId}", 1L))
+        mockMvc.perform(get(baseURL + "{frameworkId}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.name", is("Framework1")));
@@ -80,7 +81,7 @@ public class FrameworkControllerTest {
     public void findAll_NotFound_ShouldReturnHttpStatusCode204() throws Exception {
         when(frameworkServiceMock.findAll()).thenThrow(new JournalException("No frameworks found", HttpStatus.NO_CONTENT));
 
-        MvcResult result = mockMvc.perform(get("/frameworks"))
+        MvcResult result = mockMvc.perform(get(baseURL))
                 .andExpect(status().isNoContent())
                 .andReturn();
         assertEquals(result.getResponse().getContentAsString(), "No frameworks found");
@@ -103,7 +104,7 @@ public class FrameworkControllerTest {
         when(frameworkServiceMock.findAll()).thenReturn(Arrays.asList(f1, f2));
 
 
-        mockMvc.perform(get("/frameworks"))
+        mockMvc.perform(get(baseURL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id", is(1)))
@@ -125,7 +126,7 @@ public class FrameworkControllerTest {
         when(frameworkServiceMock.save(any(Framework.class))).thenReturn(f1);
 
 
-        mockMvc.perform(post("/frameworks")
+        mockMvc.perform(post(baseURL)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(f1)))
                 .andExpect(status().isCreated())
@@ -144,7 +145,7 @@ public class FrameworkControllerTest {
 
         when(frameworkServiceMock.save(any(Framework.class))).thenThrow(new JournalException("Failed to create new framework", HttpStatus.INTERNAL_SERVER_ERROR));
 
-        MvcResult result = mockMvc.perform(post("/frameworks")
+        MvcResult result = mockMvc.perform(post(baseURL)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(f1)))
                 .andExpect(status().isInternalServerError())
@@ -162,7 +163,7 @@ public class FrameworkControllerTest {
         f1.setId(new Long(1));
 
 
-        mockMvc.perform(post("/frameworks")
+        mockMvc.perform(post(baseURL)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(f1)))
                 .andExpect(status().isBadRequest());
@@ -180,7 +181,7 @@ public class FrameworkControllerTest {
         when(frameworkServiceMock.save(any(Framework.class))).thenReturn(f1);
 
 
-        mockMvc.perform(put("/frameworks/{frameworkId}", 1L)
+        mockMvc.perform(put(baseURL + "{frameworkId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(f1)))
                 .andExpect(status().isOk())
@@ -201,7 +202,7 @@ public class FrameworkControllerTest {
         when(frameworkServiceMock.findById(1L)).thenThrow(new JournalException("No framework found", HttpStatus.NOT_FOUND));
 
 
-        MvcResult result = mockMvc.perform(put("/frameworks/{frameworkId}", 1L)
+        MvcResult result = mockMvc.perform(put(baseURL + "{frameworkId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(f1)))
                 .andExpect(status().isNotFound())
@@ -223,7 +224,7 @@ public class FrameworkControllerTest {
         when(frameworkServiceMock.save(any(Framework.class))).thenThrow(new JournalException("Failed to update new framework", HttpStatus.INTERNAL_SERVER_ERROR));
 
 
-        MvcResult result = mockMvc.perform(put("/frameworks/{frameworkId}", 1L)
+        MvcResult result = mockMvc.perform(put(baseURL + "{frameworkId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(f1)))
                 .andExpect(status().isInternalServerError())
@@ -242,7 +243,7 @@ public class FrameworkControllerTest {
         f1.setId(new Long(1));
 
 
-        mockMvc.perform(put("/frameworks/{frameworkId}", 1L)
+        mockMvc.perform(put(baseURL + "{frameworkId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(f1)))
                 .andExpect(status().isBadRequest());

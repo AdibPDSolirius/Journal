@@ -30,6 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 public class LibraryControllerTest {
 
+    private String baseURL = "/api/libraries/";
+
     private MockMvc mockMvc;
 
     @InjectMocks
@@ -49,7 +51,7 @@ public class LibraryControllerTest {
     public void findById_NotFound_ShouldReturnHttpStatusCode404() throws Exception {
         when(libraryServiceMock.findById(1L)).thenThrow(new JournalException("Library not found", HttpStatus.NOT_FOUND));
 
-        MvcResult result = mockMvc.perform(get("/libraries/{libraryId}", 1L))
+        MvcResult result = mockMvc.perform(get(baseURL + "/{libraryId}", 1L))
                 .andExpect(status().isNotFound())
                 .andReturn();
         assertEquals("Library not found", result.getResponse().getContentAsString());
@@ -67,7 +69,7 @@ public class LibraryControllerTest {
 
         when(libraryServiceMock.findById(1L)).thenReturn(l1);
 
-        mockMvc.perform(get("/libraries/{libraryId}", 1L))
+        mockMvc.perform(get(baseURL + "/{libraryId}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.name", is("Library1")));
@@ -80,7 +82,7 @@ public class LibraryControllerTest {
     public void findAll_NotFound_ShouldReturnHttpStatusCode204() throws Exception {
         when(libraryServiceMock.findAll()).thenThrow(new JournalException("No libraries found", HttpStatus.NO_CONTENT));
 
-        MvcResult result = mockMvc.perform(get("/libraries"))
+        MvcResult result = mockMvc.perform(get(baseURL))
                 .andExpect(status().isNoContent())
                 .andReturn();
         assertEquals(result.getResponse().getContentAsString(), "No libraries found");
@@ -103,7 +105,7 @@ public class LibraryControllerTest {
         when(libraryServiceMock.findAll()).thenReturn(Arrays.asList(l1, l2));
 
 
-        mockMvc.perform(get("/libraries"))
+        mockMvc.perform(get(baseURL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id", is(1)))
@@ -124,7 +126,7 @@ public class LibraryControllerTest {
         when(libraryServiceMock.save(any(Library.class))).thenReturn(l1);
 
 
-        mockMvc.perform(post("/libraries")
+        mockMvc.perform(post(baseURL)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(l1)))
                 .andExpect(status().isCreated())
@@ -143,7 +145,7 @@ public class LibraryControllerTest {
 
         when(libraryServiceMock.save(any(Library.class))).thenThrow(new JournalException("Failed to create new library", HttpStatus.INTERNAL_SERVER_ERROR));
 
-        MvcResult result = mockMvc.perform(post("/libraries")
+        MvcResult result = mockMvc.perform(post(baseURL)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(l1)))
                 .andExpect(status().isInternalServerError())
@@ -161,7 +163,7 @@ public class LibraryControllerTest {
         l1.setName(TestUtil.createStringWithLength(31));
 
 
-        mockMvc.perform(post("/libraries")
+        mockMvc.perform(post(baseURL)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(l1)))
                 .andExpect(status().isBadRequest());
@@ -179,7 +181,7 @@ public class LibraryControllerTest {
         when(libraryServiceMock.save(any(Library.class))).thenReturn(l1);
 
 
-        mockMvc.perform(put("/libraries/{libraryId}", 1L)
+        mockMvc.perform(put(baseURL + "{libraryId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(l1)))
                 .andExpect(status().isOk())
@@ -200,7 +202,7 @@ public class LibraryControllerTest {
         when(libraryServiceMock.findById(1L)).thenThrow(new JournalException("No library found", HttpStatus.NOT_FOUND));
 
 
-        MvcResult result = mockMvc.perform(put("/libraries/{libraryId}", 1L)
+        MvcResult result = mockMvc.perform(put(baseURL + "{libraryId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(l1)))
                 .andExpect(status().isNotFound())
@@ -222,7 +224,7 @@ public class LibraryControllerTest {
         when(libraryServiceMock.save(any(Library.class))).thenThrow(new JournalException("Failed to update new library", HttpStatus.INTERNAL_SERVER_ERROR));
 
 
-        MvcResult result = mockMvc.perform(put("/libraries/{libraryId}", 1L)
+        MvcResult result = mockMvc.perform(put(baseURL + "{libraryId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(l1)))
                 .andExpect(status().isInternalServerError())
@@ -241,7 +243,7 @@ public class LibraryControllerTest {
         l1.setName(TestUtil.createStringWithLength(31));
 
 
-        mockMvc.perform(put("/libraries/{libraryId}", 1L)
+        mockMvc.perform(put(baseURL + "{libraryId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(l1)))
                 .andExpect(status().isBadRequest());

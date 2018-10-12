@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name="databases")
-public class Database extends Technology {
+public class Database{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

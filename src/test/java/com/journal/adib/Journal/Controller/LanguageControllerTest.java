@@ -30,6 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 public class LanguageControllerTest {
 
+    private String baseURL = "/api/languages/";
+
     private MockMvc mockMvc;
 
     @InjectMocks
@@ -49,7 +51,7 @@ public class LanguageControllerTest {
     public void findById_NotFound_ShouldReturnHttpStatusCode404() throws Exception {
         when(languageServiceMock.findById(1L)).thenThrow(new JournalException("Language not found", HttpStatus.NOT_FOUND));
 
-        MvcResult result = mockMvc.perform(get("/languages/{languageId}", 1L))
+        MvcResult result = mockMvc.perform(get(baseURL + "{languageId}", 1L))
                 .andExpect(status().isNotFound())
                 .andReturn();
         assertEquals("Language not found", result.getResponse().getContentAsString());
@@ -67,7 +69,7 @@ public class LanguageControllerTest {
 
         when(languageServiceMock.findById(1L)).thenReturn(l1);
 
-        mockMvc.perform(get("/languages/{languageId}", 1L))
+        mockMvc.perform(get(baseURL + "{languageId}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.name", is("Language1")));
@@ -80,7 +82,7 @@ public class LanguageControllerTest {
     public void findAll_NotFound_ShouldReturnHttpStatusCode204() throws Exception {
         when(languageServiceMock.findAll()).thenThrow(new JournalException("No languages found", HttpStatus.NO_CONTENT));
 
-        MvcResult result = mockMvc.perform(get("/languages"))
+        MvcResult result = mockMvc.perform(get(baseURL))
                 .andExpect(status().isNoContent())
                 .andReturn();
         assertEquals(result.getResponse().getContentAsString(), "No languages found");
@@ -103,7 +105,7 @@ public class LanguageControllerTest {
         when(languageServiceMock.findAll()).thenReturn(Arrays.asList(l1, l2));
 
 
-        mockMvc.perform(get("/languages"))
+        mockMvc.perform(get(baseURL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id", is(1)))
@@ -124,7 +126,7 @@ public class LanguageControllerTest {
         when(languageServiceMock.save(any(Language.class))).thenReturn(l1);
 
 
-        mockMvc.perform(post("/languages")
+        mockMvc.perform(post(baseURL)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(l1)))
                 .andExpect(status().isCreated())
@@ -143,7 +145,7 @@ public class LanguageControllerTest {
 
         when(languageServiceMock.save(any(Language.class))).thenThrow(new JournalException("Failed to create new language", HttpStatus.INTERNAL_SERVER_ERROR));
 
-        MvcResult result = mockMvc.perform(post("/languages")
+        MvcResult result = mockMvc.perform(post(baseURL)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(l1)))
                 .andExpect(status().isInternalServerError())
@@ -161,7 +163,7 @@ public class LanguageControllerTest {
         l1.setName(TestUtil.createStringWithLength(31));
 
 
-        mockMvc.perform(post("/languages")
+        mockMvc.perform(post(baseURL)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(l1)))
                 .andExpect(status().isBadRequest());
@@ -179,7 +181,7 @@ public class LanguageControllerTest {
         when(languageServiceMock.save(any(Language.class))).thenReturn(l1);
 
 
-        mockMvc.perform(put("/languages/{languageId}", 1L)
+        mockMvc.perform(put(baseURL + "{languageId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(l1)))
                 .andExpect(status().isOk())
@@ -200,7 +202,7 @@ public class LanguageControllerTest {
         when(languageServiceMock.findById(1L)).thenThrow(new JournalException("No language found", HttpStatus.NOT_FOUND));
 
 
-        MvcResult result = mockMvc.perform(put("/languages/{languageId}", 1L)
+        MvcResult result = mockMvc.perform(put(baseURL + "{languageId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(l1)))
                 .andExpect(status().isNotFound())
@@ -222,7 +224,7 @@ public class LanguageControllerTest {
         when(languageServiceMock.save(any(Language.class))).thenThrow(new JournalException("Failed to update new language", HttpStatus.INTERNAL_SERVER_ERROR));
 
 
-        MvcResult result = mockMvc.perform(put("/languages/{languageId}", 1L)
+        MvcResult result = mockMvc.perform(put(baseURL + "{languageId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(l1)))
                 .andExpect(status().isInternalServerError())
@@ -241,7 +243,7 @@ public class LanguageControllerTest {
         l1.setName(TestUtil.createStringWithLength(31));
 
 
-        mockMvc.perform(put("/languages/{languageId}", 1L)
+        mockMvc.perform(put(baseURL + "{languageId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(l1)))
                 .andExpect(status().isBadRequest());

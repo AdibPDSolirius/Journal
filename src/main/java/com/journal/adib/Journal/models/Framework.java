@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Entity
 @Table(name="frameworks")
-public class Framework extends Technology{
+public class Framework {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -35,6 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 public class FileControllerTest{
 
+    private String baseURL = "/api/files/";
+
     private MockMvc mockMvc;
 
     @InjectMocks
@@ -58,7 +60,7 @@ public class FileControllerTest{
     @Test
     public void findByName_NotFound_ShouldReturnHttpStatusCode404() throws Exception {
         when(storageServiceMock.getFile("file.jpeg")).thenThrow(new JournalException("File not found", HttpStatus.NOT_FOUND));
-        MvcResult result = mockMvc.perform(get("/api/files/{filename:.*}", "file.jpeg"))
+        MvcResult result = mockMvc.perform(get(baseURL + "{filename:.*}", "file.jpeg"))
                 .andExpect(status().isNotFound())
                 .andReturn();
         assertEquals("File not found", result.getResponse().getContentAsString());
@@ -70,11 +72,11 @@ public class FileControllerTest{
     @Test
     public void findByName_NotCorrectType_ShouldReturnHttpStatusCode415() throws Exception {
         when(storageServiceMock.getFile("file.abc")).thenThrow(new JournalException("Not correct file type", HttpStatus.UNSUPPORTED_MEDIA_TYPE));
-        MvcResult result = mockMvc.perform(get("/api/files/{filename:.*}", "file.abc"))
+        MvcResult result = mockMvc.perform(get(baseURL + "{filename:.*}", "file.abc"))
                 .andExpect(status().isUnsupportedMediaType())
                 .andReturn();
         assertEquals("Not correct file type", result.getResponse().getContentAsString());
-        verify(storageServiceMock, times(1)).getFile("file.jpeg");
+        verify(storageServiceMock, times(1)).getFile("file.abc");
         verifyNoMoreInteractions(storageServiceMock);
     }
 
@@ -83,7 +85,7 @@ public class FileControllerTest{
         String mockName = "file";
         MockMultipartFile mockMultipartFile = new MockMultipartFile(mockName, mockName.getBytes());
         when(storageServiceMock.store(mockMultipartFile)).thenReturn("123456file.jpeg");
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/files/upload").file(mockMultipartFile))
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart(baseURL + "upload").file(mockMultipartFile))
                 .andExpect(status().isOk())
                 .andReturn();
         assertEquals("123456file.jpeg", result.getResponse().getContentAsString());
@@ -96,7 +98,7 @@ public class FileControllerTest{
         String mockName = "file";
         MockMultipartFile mockMultipartFile = new MockMultipartFile(mockName, mockName.getBytes());
         when(storageServiceMock.store(mockMultipartFile)).thenThrow(new JournalException("Not correct file type", HttpStatus.UNSUPPORTED_MEDIA_TYPE));
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/files/upload").file(mockMultipartFile))
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart(baseURL + "upload").file(mockMultipartFile))
                 .andExpect(status().isUnsupportedMediaType())
                 .andReturn();
         assertEquals("Not correct file type", result.getResponse().getContentAsString());

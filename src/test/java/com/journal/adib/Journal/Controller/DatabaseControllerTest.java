@@ -30,6 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 public class DatabaseControllerTest {
 
+    private String baseURL = "/api/databases/";
+
     private MockMvc mockMvc;
 
     @InjectMocks
@@ -49,7 +51,7 @@ public class DatabaseControllerTest {
     public void findById_NotFound_ShouldReturnHttpStatusCode404() throws Exception {
         when(databaseServiceMock.findById(1L)).thenThrow(new JournalException("Database not found", HttpStatus.NOT_FOUND));
 
-        MvcResult result = mockMvc.perform(get("api/databases/{databaseId}", 1L))
+        MvcResult result = mockMvc.perform(get(baseURL + "{databaseId}", 1L))
                 .andExpect(status().isNotFound())
                 .andReturn();
         assertEquals("Database not found", result.getResponse().getContentAsString());
@@ -67,7 +69,7 @@ public class DatabaseControllerTest {
 
         when(databaseServiceMock.findById(1L)).thenReturn(d1);
 
-        mockMvc.perform(get("/databases/{databaseId}", 1L))
+        mockMvc.perform(get(baseURL + "{databaseId}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.name", is("Database1")));
@@ -80,7 +82,7 @@ public class DatabaseControllerTest {
     public void findAll_NotFound_ShouldReturnHttpStatusCode204() throws Exception {
         when(databaseServiceMock.findAll()).thenThrow(new JournalException("No databases found", HttpStatus.NO_CONTENT));
 
-        MvcResult result = mockMvc.perform(get("/databases"))
+        MvcResult result = mockMvc.perform(get(baseURL))
                 .andExpect(status().isNoContent())
                 .andReturn();
         assertEquals(result.getResponse().getContentAsString(), "No databases found");
@@ -103,7 +105,7 @@ public class DatabaseControllerTest {
         when(databaseServiceMock.findAll()).thenReturn(Arrays.asList(d1, d2));
 
 
-        mockMvc.perform(get("/databases"))
+        mockMvc.perform(get(baseURL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id", is(1)))
@@ -125,7 +127,7 @@ public class DatabaseControllerTest {
         when(databaseServiceMock.save(any(Database.class))).thenReturn(d1);
 
 
-        mockMvc.perform(post("/databases")
+        mockMvc.perform(post(baseURL)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(d1)))
                 .andExpect(status().isCreated())
@@ -144,7 +146,7 @@ public class DatabaseControllerTest {
 
         when(databaseServiceMock.save(any(Database.class))).thenThrow(new JournalException("Failed to create new database", HttpStatus.INTERNAL_SERVER_ERROR));
 
-        MvcResult result = mockMvc.perform(post("/databases")
+        MvcResult result = mockMvc.perform(post(baseURL)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(d1)))
                 .andExpect(status().isInternalServerError())
@@ -162,7 +164,7 @@ public class DatabaseControllerTest {
         d1.setId(new Long(1));
 
 
-        mockMvc.perform(post("/databases")
+        mockMvc.perform(post(baseURL)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(d1)))
                 .andExpect(status().isBadRequest());
@@ -180,7 +182,7 @@ public class DatabaseControllerTest {
         when(databaseServiceMock.save(any(Database.class))).thenReturn(d1);
 
 
-        mockMvc.perform(put("/databases/{databaseId}", 1L)
+        mockMvc.perform(put(baseURL + "{databaseId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(d1)))
                 .andExpect(status().isOk())
@@ -201,7 +203,7 @@ public class DatabaseControllerTest {
         when(databaseServiceMock.findById(1L)).thenThrow(new JournalException("No database found", HttpStatus.NOT_FOUND));
 
 
-        MvcResult result = mockMvc.perform(put("/databases/{databaseId}", 1L)
+        MvcResult result = mockMvc.perform(put(baseURL + "{databaseId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(d1)))
                 .andExpect(status().isNotFound())
@@ -223,7 +225,7 @@ public class DatabaseControllerTest {
         when(databaseServiceMock.save(any(Database.class))).thenThrow(new JournalException("Failed to update new database", HttpStatus.INTERNAL_SERVER_ERROR));
 
 
-        MvcResult result = mockMvc.perform(put("/databases/{databaseId}", 1L)
+        MvcResult result = mockMvc.perform(put(baseURL + "{databaseId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(d1)))
                 .andExpect(status().isInternalServerError())
@@ -242,7 +244,7 @@ public class DatabaseControllerTest {
         d1.setId(new Long(1));
 
 
-        mockMvc.perform(put("/databases/{databaseId}", 1L)
+        mockMvc.perform(put(baseURL + "{databaseId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(d1)))
                 .andExpect(status().isBadRequest());

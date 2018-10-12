@@ -9,7 +9,6 @@ public class ErrorHandler{
 
     @ExceptionHandler({JournalException.class})
     public ResponseEntity<Object> entityNotFound(JournalException je) {
-        System.out.println(je.getErrorMessage());
         return ResponseEntity.status(je.getErrorCode()).body(je.getErrorMessage());
     }
 

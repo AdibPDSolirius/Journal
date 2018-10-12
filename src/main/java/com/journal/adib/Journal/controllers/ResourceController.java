@@ -66,7 +66,7 @@ public class ResourceController {
         resource.setFile(inputResource.getFile());
         resource.setLanguages(inputResource.getLanguages());
         resource.setFrameworks(inputResource.getFrameworks());
-        resource.setLibraries(inputResource.getLibraries());
+//        resource.setLibraries(inputResource.getLibraries());
         resource.setDatabases(inputResource.getDatabases());
 
         return ResponseEntity.status(HttpStatus.OK).body(resourceService.save(resource));

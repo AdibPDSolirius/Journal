@@ -33,6 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ResourceControllerTest {
 
+    private String baseURL = "/api/resources/";
+
 
     private MockMvc mockMvc;
 
@@ -54,7 +56,7 @@ public class ResourceControllerTest {
     public void findById_NotFound_ShouldReturnHttpStatusCode400() throws Exception {
         when(resourceServiceMock.findById(1L)).thenThrow(new JournalException("Resource not found", HttpStatus.NOT_FOUND));
 
-        MvcResult result = mockMvc.perform(get("/resources/{resourceId}", 1L))
+        MvcResult result = mockMvc.perform(get(baseURL + "{resourceId}", 1L))
                 .andExpect(status().isNotFound())
                 .andReturn();
         assertEquals("Resource not found", result.getResponse().getContentAsString());
@@ -72,7 +74,7 @@ public class ResourceControllerTest {
 
         when(resourceServiceMock.findById(1L)).thenReturn(r1);
 
-        mockMvc.perform(get("/resources/{resourceId}", 1L))
+        mockMvc.perform(get(baseURL + "/{resourceId}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.name", is("Resource1")))
@@ -86,7 +88,7 @@ public class ResourceControllerTest {
     public void findAll_NotFound_ShouldReturnHttpStatusCode204() throws Exception {
         when(resourceServiceMock.findAll()).thenThrow(new JournalException("No resources found", HttpStatus.NO_CONTENT));
 
-        MvcResult result = mockMvc.perform(get("/resources"))
+        MvcResult result = mockMvc.perform(get(baseURL))
                 .andExpect(status().isNoContent())
                 .andReturn();
         assertEquals(result.getResponse().getContentAsString(), "No resources found");
@@ -120,7 +122,7 @@ public class ResourceControllerTest {
         when(resourceServiceMock.findAll()).thenReturn(Arrays.asList(r1, r2));
 
 
-        mockMvc.perform(get("/resources"))
+        mockMvc.perform(get(baseURL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id", is(1)))
@@ -145,7 +147,7 @@ public class ResourceControllerTest {
         r1.setId(new Long(1));
 
 
-        mockMvc.perform(post("/resources")
+        mockMvc.perform(post(baseURL)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(r1)))
                 .andExpect(status().isBadRequest());
@@ -162,7 +164,7 @@ public class ResourceControllerTest {
 
         when(resourceServiceMock.save(any(Resource.class))).thenThrow(new JournalException("Failed to create new resource", HttpStatus.INTERNAL_SERVER_ERROR));
 
-        MvcResult result = mockMvc.perform(post("/resources")
+        MvcResult result = mockMvc.perform(post(baseURL)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(r1)))
                 .andExpect(status().isInternalServerError())
@@ -192,7 +194,7 @@ public class ResourceControllerTest {
         when(resourceServiceMock.save(any(Resource.class))).thenReturn(r1);
 
 
-        mockMvc.perform(post("/resources")
+        mockMvc.perform(post(baseURL)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(r1)))
                 .andExpect(status().isCreated())
@@ -227,7 +229,7 @@ public class ResourceControllerTest {
         when(resourceServiceMock.save(any(Resource.class))).thenReturn(r1);
 
 
-        mockMvc.perform(put("/resources/{resourceId}", 1L)
+        mockMvc.perform(put(baseURL + "{resourceId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(r1)))
                 .andExpect(status().isOk())
@@ -253,7 +255,7 @@ public class ResourceControllerTest {
         when(resourceServiceMock.findById(1L)).thenReturn(r1);
         when(resourceServiceMock.save(any(Resource.class))).thenThrow(new JournalException("Failed to update new resource", HttpStatus.INTERNAL_SERVER_ERROR));
 
-        MvcResult result = mockMvc.perform(put("/resources/{resourceId}", 1L)
+        MvcResult result = mockMvc.perform(put(baseURL + "{resourceId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(r1)))
                 .andExpect(status().isInternalServerError())
@@ -274,7 +276,7 @@ public class ResourceControllerTest {
 
         when(resourceServiceMock.findById(1L)).thenThrow(new JournalException("Resource not found", HttpStatus.NOT_FOUND));
 
-        MvcResult result = mockMvc.perform(put("/resources/{resourceId}", 1L)
+        MvcResult result = mockMvc.perform(put(baseURL+ "{resourceId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(r1)))
                 .andExpect(status().isNotFound())
@@ -293,7 +295,7 @@ public class ResourceControllerTest {
         r1.setId(new Long(1));
 
 
-        mockMvc.perform(put("/resources/{resourceId}", 1L)
+        mockMvc.perform(put(baseURL +"{resourceId}", 1L)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(r1)))
                 .andExpect(status().isBadRequest());
@@ -326,7 +328,7 @@ public class ResourceControllerTest {
         when(resourceServiceMock.filterResourcesByLanguageId(3L)).thenReturn(Arrays.asList(r2));
 
 
-        mockMvc.perform(get("/resources/language/{languageId}", 3L))
+        mockMvc.perform(get(baseURL + "language/{languageId}", 3L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(2)))
@@ -343,7 +345,7 @@ public class ResourceControllerTest {
     public void filterByLanguageId_NotFound_ShouldReturnHttpStatusCode400() throws Exception {
         when(resourceServiceMock.filterResourcesByLanguageId(1L)).thenThrow(new JournalException("No resources found", HttpStatus.NOT_FOUND));
 
-        MvcResult result = mockMvc.perform(get("/resources/language/{languageId}", 1L))
+        MvcResult result = mockMvc.perform(get(baseURL + "language/{languageId}", 1L))
                 .andExpect(status().isNotFound())
                 .andReturn();
         assertEquals("No resources found", result.getResponse().getContentAsString());
@@ -377,7 +379,7 @@ public class ResourceControllerTest {
         when(resourceServiceMock.filterResourcesByFrameworkId(3L)).thenReturn(Arrays.asList(r2));
 
 
-        mockMvc.perform(get("/resources/framework/{frameworkId}", 3L))
+        mockMvc.perform(get(baseURL + "framework/{frameworkId}", 3L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(2)))
@@ -394,7 +396,7 @@ public class ResourceControllerTest {
     public void filterByFrameworkId_NotFound_ShouldReturnHttpStatusCode400() throws Exception {
         when(resourceServiceMock.filterResourcesByFrameworkId(1L)).thenThrow(new JournalException("No resources found", HttpStatus.NOT_FOUND));
 
-        MvcResult result = mockMvc.perform(get("/resources/framework/{frameworkId}", 1L))
+        MvcResult result = mockMvc.perform(get(baseURL + "framework/{frameworkId}", 1L))
                 .andExpect(status().isNotFound())
                 .andReturn();
         assertEquals("No resources found", result.getResponse().getContentAsString());
@@ -428,7 +430,7 @@ public class ResourceControllerTest {
         when(resourceServiceMock.filterResourcesByLibraryId(3L)).thenReturn(Arrays.asList(r2));
 
 
-        mockMvc.perform(get("/resources/library/{libraryId}", 3L))
+        mockMvc.perform(get(baseURL + "library/{libraryId}", 3L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(2)))
@@ -445,7 +447,7 @@ public class ResourceControllerTest {
     public void filterByLibraryId_NotFound_ShouldReturnHttpStatusCode400() throws Exception {
         when(resourceServiceMock.filterResourcesByLibraryId(1L)).thenThrow(new JournalException("No resources found", HttpStatus.NOT_FOUND));
 
-        MvcResult result = mockMvc.perform(get("/resources/library/{libraryId}", 1L))
+        MvcResult result = mockMvc.perform(get(baseURL + "library/{libraryId}", 1L))
                 .andExpect(status().isNotFound())
                 .andReturn();
         assertEquals("No resources found", result.getResponse().getContentAsString());
@@ -479,7 +481,7 @@ public class ResourceControllerTest {
         when(resourceServiceMock.filterResourcesByDatabaseId(3L)).thenReturn(Arrays.asList(r2));
 
 
-        mockMvc.perform(get("/resources/database/{databaseId}", 3L))
+        mockMvc.perform(get(baseURL + "database/{databaseId}", 3L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(2)))
@@ -496,7 +498,7 @@ public class ResourceControllerTest {
     public void filterByDatabaseId_NotFound_ShouldReturnHttpStatusCode400() throws Exception {
         when(resourceServiceMock.filterResourcesByDatabaseId(1L)).thenThrow(new JournalException("No resources found", HttpStatus.NOT_FOUND));
 
-        MvcResult result = mockMvc.perform(get("/resources/database/{databaseId}", 1L))
+        MvcResult result = mockMvc.perform(get(baseURL + "database/{databaseId}", 1L))
                 .andExpect(status().isNotFound())
                 .andReturn();
         assertEquals("No resources found", result.getResponse().getContentAsString());
