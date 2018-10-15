@@ -311,7 +311,7 @@ public class ResourceIntegrationSteps {
             d.setName(databasePrefix + i);
             ResponseEntity<Database> databaseResponse = restTemplate.exchange(databasesUrl,
                     HttpMethod.POST,
-                    new HttpEntity(TestUtil.convertObjectToJsonBytes(r), header),
+                    new HttpEntity(TestUtil.convertObjectToJsonBytes(d), header),
                     new ParameterizedTypeReference<Database>() {
                     });
             Set<Database> databaseSet = new HashSet<>();
@@ -349,7 +349,10 @@ public class ResourceIntegrationSteps {
                 null,
                 new ParameterizedTypeReference<List<Database>>() {
                 }));
-        cleanResources(multipleResourceResponse);
+        cleanResources(restTemplate.exchange(resourcesUrl,
+                HttpMethod.GET,
+                null,
+                multipleResourceTypeRef));
     }
 
 
@@ -360,11 +363,11 @@ public class ResourceIntegrationSteps {
             r.setName(resourcePrefix + i);
             r.setUrl(resourcePrefix + i + "url");
 
-            Framework d = new Framework();
-            d.setName(frameworkPrefix + i);
+            Framework f = new Framework();
+            f.setName(frameworkPrefix + i);
             ResponseEntity<Framework> frameworkResponse = restTemplate.exchange(frameworksUrl,
                     HttpMethod.POST,
-                    new HttpEntity(TestUtil.convertObjectToJsonBytes(r), header),
+                    new HttpEntity(TestUtil.convertObjectToJsonBytes(f), header),
                     new ParameterizedTypeReference<Framework>() {
                     });
             Set<Framework> frameworkSet = new HashSet<>();
@@ -402,7 +405,10 @@ public class ResourceIntegrationSteps {
                 null,
                 new ParameterizedTypeReference<List<Framework>>() {
                 }));
-        cleanResources(multipleResourceResponse);
+        cleanResources(restTemplate.exchange(resourcesUrl,
+                HttpMethod.GET,
+                null,
+                multipleResourceTypeRef));
     }
 
     @Given("^test resource objects with languages posted")
@@ -416,7 +422,7 @@ public class ResourceIntegrationSteps {
             l.setName(languagePrefix + i);
             ResponseEntity<Language> languageResponse = restTemplate.exchange(languagesUrl,
                     HttpMethod.POST,
-                    new HttpEntity(TestUtil.convertObjectToJsonBytes(r), header),
+                    new HttpEntity(TestUtil.convertObjectToJsonBytes(l), header),
                     new ParameterizedTypeReference<Language>() {});
             Set<Language> languageSet = new HashSet<>();
             languageSet.add(languageResponse.getBody());
@@ -453,7 +459,10 @@ public class ResourceIntegrationSteps {
                 null,
                 new ParameterizedTypeReference<List<Language>>() {
                 }));
-        cleanResources(multipleResourceResponse);
+        cleanResources(restTemplate.exchange(resourcesUrl,
+                HttpMethod.GET,
+                null,
+                multipleResourceTypeRef));
     }
 
     @Given("^test resource objects with libraries posted")
@@ -467,7 +476,7 @@ public class ResourceIntegrationSteps {
             li.setName(libraryPrefix + i);
             ResponseEntity<Library> libraryResponse = restTemplate.exchange(librariesUrl,
                     HttpMethod.POST,
-                    new HttpEntity(TestUtil.convertObjectToJsonBytes(r), header),
+                    new HttpEntity(TestUtil.convertObjectToJsonBytes(li), header),
                     new ParameterizedTypeReference<Library>() {});
             Set<Library> librarySet= new HashSet<>();
             librarySet.add(libraryResponse.getBody());
@@ -504,7 +513,10 @@ public class ResourceIntegrationSteps {
                 null,
                 new ParameterizedTypeReference<List<Library>>() {
                 }));
-        cleanResources(multipleResourceResponse);
+        cleanResources(restTemplate.exchange(resourcesUrl,
+                HttpMethod.GET,
+                null,
+                multipleResourceTypeRef));
     }
 
 }
